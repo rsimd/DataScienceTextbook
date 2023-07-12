@@ -1,0 +1,46 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: index
+options:
+  numbered: true
+chapters:
+- file: intro
+- file: python.myst.md
+- file: k-NN_k-Nearest Neighbors Classifier_解説.ipynb
+  sections:
+    - file: k-NN_k-Nearest Neighbors Classifier_実装.ipynb
+    - file: k-NN_k-Nearest Neighbors Classifier_実装_ans.ipynb
+- file: k-Means_課題.ipynb
+  sections:
+    - file: k-Means_回答.ipynb
+- file: LinearRegression.ipynb
+- file: LogisticRegression.ipynb
+- file: SVD_Singular Value Decomposition.ipynb
+- file: PCA_Principal Component Analysis.ipynb
+- file: NMF_Non-Negative Matrix Factorization.ipynb
+- file: RF_RandomForestの実装.ipynb
+- file: perceptron.ipynb
+  sections:
+    - file: perceptron.myst.md
+- file: mlp.ipynb
+  sections:
+    - file: matrix_ops.ipynb
+    - file: activation_functions.ipynb
+    - file: mlp_iris.myst.md
+- file: word2vec.ipynb
+  sections:
+    - file: cbow.myst.md
+    - file: skipgram.myst.md
+    - file: skip_gram.ipynb
+- file: rnn.ipynb
+  sections:
+    - file: lstm.ipynb
+- file: cnn.ipynb
+- file: ae.ipynb
+  sections:
+    - file: ae_mnist.myst.md
+    - file: ae.myst.md
+#- file: VariatoinalAutoEncoder.ipynb
+- file: bib.myst.md

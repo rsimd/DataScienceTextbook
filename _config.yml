@@ -1,0 +1,59 @@
+# Book settings
+# Learn more at https://jupyterbook.org/customize/config.html
+
+title: 入門：ニューラルネットワーク
+author: Riki Murakami
+logo: ./figs/logo.png
+
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: force
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - ref.bib
+#bibtex_reference_style:
+#  - author_year
+  
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/rsimd/textbook  # Online location of your book
+  path_to_book: docs  # Optional path to your book, relative to the repository root
+  branch: main  # Which branch of the repository should be used when creating links (optional)
+
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: true
+  use_repository_button: true
+
+sphinx:
+  config:
+    bibtex_reference_style: author_year
+    #bibtex_bibfiles: "ref.bib"
+    mathjax_config:
+      tex:
+        macros:
+          "bbN": "\\mathbb{N}"
+          "bbR": "\\mathbb{R}"
+          "floor": ["\\lfloor#1\\rfloor", 1]
+          "bmat" : ["\\left[\\begin{array}"]
+          "emat" : ["\\end{array}\\right]"]
+    html_js_files:
+    - https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js
+    nb_custom_formats:
+        .myst.md:
+            - jupytext.reads
+            - fmt: myst
+  extra_extensions:
+    - sphinx_proof
+
+only_build_toc_files: true
