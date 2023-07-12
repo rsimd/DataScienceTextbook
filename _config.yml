@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: 入門：ニューラルネットワーク
+title: DS & PRML 資料集
 author: Riki Murakami
 logo: ./figs/logo.png
 
