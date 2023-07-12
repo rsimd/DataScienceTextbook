@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+
+
+<html >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>13.7. cbow.pyのサンプルコード &#8212; 入門：ニューラルネットワーク</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cbow.myst';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="13.8. [発展課題]skip_gram.py" href="skipgram.myst.html" />
+    <link rel="prev" title="13. Word2Vec" href="word2vec.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="None"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Textbook
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. 導入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.myst.html">2. Pythonの前提知識</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E8%A7%A3%E8%AA%AC.html">3. k-NN (k-Nearest Neighbors Classifier; k近傍法)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html">3.3. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85_ans.html">3.4. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-Means_%E8%AA%B2%E9%A1%8C.html">4. k平均法(k-Means)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LinearRegression.html">5. 線形回帰 （Linear Regression）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegression.html">6. ロジスティック回帰 (Logistic Regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SVD_Singular%20Value%20Decomposition.html">7. SVD (Singular Value Decomposition; 特異値分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_Principal%20Component%20Analysis.html">8. PCA (Principal Component Analysis; 主成分分析)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMF_Non-Negative%20Matrix%20Factorization.html">9. NMF (Non-Negative Matrix Factorization; 非負値行列因子分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RF_RandomForest%E3%81%AE%E5%AE%9F%E8%A3%85.html">10. RF (Random Forest; ランダムフォレスト)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="perceptron.html">11. パーセプトロン（Perceptron）</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="perceptron.myst.html">11.8. perceptron.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlp.html">12. 多層パーセプトロン (MLP: Multi-Layer Perceptron)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="matrix_ops.html">12.5. 行列計算で全結合層の計算が実装できる？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activation_functions.html">12.6. 活性化関数（Activation Functions）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp_iris.myst.html">12.7. [課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="word2vec.html">13. Word2Vec</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">13.7. cbow.pyのサンプルコード</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skipgram.myst.html">13.8. [発展課題]skip_gram.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skip_gram.html">13.9. Skip-Gram</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="rnn.html">14. Recurrent Neural Network</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="lstm.html">14.4. LSTM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cnn.html">15. Convolutional Neural Network</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="ae.html">16. Auto Encoder</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="ae_mnist.myst.html">16.6. ae_mnist_animation.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ae.myst.html">16.7. [課題] ae_fmnist_animation.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bib.myst.html">17. 参考文献</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="ソースリポジトリ"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/edit/main/docs/cbow.myst.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/issues/new?title=Issue%20on%20page%20%2Fcbow.myst.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="問題を報告"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="このページをダウンロード">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/cbow.myst.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="ソースファイルをダウンロード"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="PDFに印刷"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="全画面モード"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>cbow.pyのサンプルコード</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 目次 </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">13.7.1. 実装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">13.7.2. 実行結果</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">13.7.2.1. Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">13.7.2.2. 実行</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="cbow-py">
+<h1><span class="section-number">13.7. </span>cbow.pyのサンプルコード<a class="headerlink" href="#cbow-py" title="Permalink to this headline">#</a></h1>
+<section id="id1">
+<h2><span class="section-number">13.7.1. </span>実装<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<p>cbow.pyのサンプルプログラムを以下に示します．argparseパッケージを使ってCLI（Command Line Interface）アプリ化しています．</p>
+<div class="dropdown admonition">
+<p class="admonition-title">ソースコード</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-number">Listing 13.1 </span><span class="caption-text"><a class="reference external" href="http://cbow.py">cbow.py</a></span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">tqdm.std</span> <span class="kn">import</span> <span class="n">trange</span><span class="p">,</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span>
+
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;CBOWの訓練を行う&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--learning_rate&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--batch_size&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--embedding_dim&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--max_epochs&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--device&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--data_path&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./data/ja.text8&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;訓練用コーパスの保存場所&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--save_path&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;学習済みモデルの保存場所&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--window_size&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--topn&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;検索単語数&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--query&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;文字列を渡すと類似する単語をtopn個検索する&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">class</span> <span class="nc">CBoW</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embeddingbag</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">EmbeddingBag</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embeddingbag</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">/</span> <span class="n">inputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">build_dictionary</span><span class="p">(</span><span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">min_df</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;学習に使うコーパスから辞書とBoWを作る</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        texts (list[str]): コーパス，文書ごとに文字列として分けられたものがリストに入っている．</span>
+<span class="sd">        min_df (int, optional): 最低出現文書数. Defaults to 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Any: id2word, word2id, BoW(CSR_matrix)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">my_analyzer</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">token</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;[ぁ-ん]+|[ァ-ヴー]+|[一-龠]+&#39;</span><span class="p">,</span> <span class="n">token</span><span class="p">),</span> <span class="n">tokens</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tokens</span>
+    <span class="n">countvectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">min_df</span><span class="o">=</span><span class="n">min_df</span><span class="p">,</span> <span class="n">analyzer</span><span class="o">=</span><span class="n">my_analyzer</span><span class="p">)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">countvectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+    <span class="n">id2word</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">w</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+        <span class="n">countvectorizer</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())}</span>
+    <span class="n">word2id</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="p">:</span> <span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">id2word</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">id2word</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">X</span>
+
+
+<span class="k">def</span> <span class="nf">build_contexts_and_target</span><span class="p">(</span><span class="n">preprocessed_texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;コンテキストとターゲットの配列を返す</span>
+<span class="sd">    Args:</span>
+<span class="sd">        preprocessed_texts (list[list[str]]): 単語ごとに半角スペースで区切られた前処理済みのコーパス</span>
+<span class="sd">        window_size (int, optional): . Defaults to 5): ウィンドウサイズ</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[np.ndarray, np.ndarray]: コンテキストとターゲット</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">window_size</span><span class="o">//</span><span class="mi">2</span>
+    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">preprocessed_texts</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">-</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">a</span><span class="p">:</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">tmp</span> <span class="o">+=</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">a</span><span class="p">]</span>
+            <span class="n">contexts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">contexts</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_batch</span><span class="p">(</span><span class="n">contexts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;バッチジェネレータ</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        contexts (np.ndarray): コンテキスト行列</span>
+<span class="sd">        target (np.ndarray): ターゲットベクトル</span>
+<span class="sd">        batch_size (int, optional): バッチサイズ. Defaults to 32.</span>
+<span class="sd">        shuffle (bool, optional): シャッフルするかを決めるフラグ. Defaults to True.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        tuple(torch.Tensor, torch.Tensor): ミニバッチ</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">n_batches</span> <span class="o">=</span> <span class="n">D</span> <span class="o">//</span> <span class="n">batch_size</span>
+    <span class="k">for</span> <span class="n">minibatch_indexes</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">n_batches</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">contexts</span><span class="p">[</span><span class="n">minibatch_indexes</span><span class="p">])</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">minibatch_indexes</span><span class="p">])</span>
+        <span class="k">yield</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+
+
+<span class="k">def</span> <span class="nf">get_similar_words</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">word_embeddings</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;単語埋め込みベクトルを使って似た単語を検索する</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        query (str): 類似単語を検索したい単語</span>
+<span class="sd">        word2id (dict[str,int], optional): 単語→単語idの辞書</span>
+<span class="sd">        word_embeddings (np.ndarray, optional): 単語埋め込み行列．必ず(語彙数x埋め込み次元数)の行列であること.</span>
+<span class="sd">        topn (int, optional): 検索結果の表示個数. Defaults to 5.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">word2id</span><span class="p">[</span><span class="n">query</span><span class="p">]</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">word_embeddings</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">word_embeddings</span><span class="p">,</span>
+         <span class="nb">ord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># {(V,L).T / (V)}.T = (V,L)</span>
+    <span class="n">target_vector</span> <span class="o">=</span> <span class="n">E</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+    <span class="n">cossim</span> <span class="o">=</span> <span class="n">E</span> <span class="o">@</span> <span class="n">target_vector</span>  <span class="c1"># (V,L)@(L)=(V)</span>
+    <span class="n">sorted_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cossim</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="n">topn</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># 最も似たベクトルは自分自身なので先頭を除外</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;&gt;&gt; </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">_id2word</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">word2id</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">rank</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_index</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rank</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">_id2word</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="se">\t</span><span class="si">{</span><span class="n">cossim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">save_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;./models/cbow_ep</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">max_epochs</span><span class="si">}</span><span class="s2">_lr</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">_emb</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">embedding_dim</span><span class="si">}</span><span class="s2">.pth&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">save_path</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text8</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="n">text8</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;。&quot;</span><span class="p">)</span>
+    <span class="n">id2word</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">build_dictionary</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">id2word</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;文書数: </span><span class="si">{</span><span class="n">D</span><span class="si">}</span><span class="s2">, 語彙数: </span><span class="si">{</span><span class="n">V</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">preprocessed_texts</span> <span class="o">=</span> <span class="p">[[</span><span class="n">word2id</span><span class="p">[</span><span class="n">w</span><span class="p">]</span>
+                           <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">word2id</span><span class="p">]</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+    <span class="n">preprocessed_texts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">text</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">preprocessed_texts</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">args</span><span class="o">.</span><span class="n">window_size</span><span class="p">]</span>
+    <span class="n">contexts</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">build_contexts_and_target</span><span class="p">(</span>
+        <span class="n">preprocessed_texts</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">window_size</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;前処理後の文書数:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">preprocessed_texts</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;contextsの数: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">contexts</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">n_batches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">//</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span>
+    <span class="n">cbow</span> <span class="o">=</span> <span class="n">CBoW</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">embedding_dim</span><span class="p">)</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">save_path</span><span class="p">):</span>
+        <span class="c1"># 学習済みの重みがない場合</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training CBoW from scrach...&quot;</span><span class="p">)</span>
+        <span class="n">cbow</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="n">cbow</span> <span class="o">=</span> <span class="n">cbow</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">cbow</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">)</span>
+        <span class="n">monitoring_loss</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">n_batches</span><span class="p">)</span> <span class="k">as</span> <span class="n">tbar</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">get_batch</span><span class="p">(</span><span class="n">contexts</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+                    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                    <span class="n">logits</span> <span class="o">=</span> <span class="n">cbow</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+                    <span class="n">monitoring_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
+                    <span class="n">tbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cbow</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">cbow</span> <span class="o">=</span> <span class="n">cbow</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="o">+</span><span class="s2">&quot;.vocab&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">word2id</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cbow</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">save_path</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;cross entropy of training set&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;iteration&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;cross entropy loss&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">monitoring_loss</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 学習済みの重みがある場合</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loading pretrained weights...&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="o">+</span><span class="s2">&quot;.vocab&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">vocab</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">id2word</span> <span class="o">=</span> <span class="n">vocab</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="n">word2id</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span> <span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">id2word</span><span class="p">)}</span>
+
+        <span class="n">cbow</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span><span class="p">))</span>
+        <span class="n">cbow</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">word_embeddings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cbow</span><span class="o">.</span><span class="n">embeddingbag</span><span class="o">.</span><span class="n">parameters</span><span class="p">())[</span>
+            <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">get_similar_words</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">word2id</span><span class="p">,</span> <span class="n">word_embeddings</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">topn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h2><span class="section-number">13.7.2. </span>実行結果<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<section id="usage">
+<h3><span class="section-number">13.7.2.1. </span>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">#</a></h3>
+<p>argparserのdescriptionやhelpに説明を書き込んだので，<code class="docutils literal notranslate"><span class="pre">--help</span></code> オプションを使えば説明が表示されます．</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">datasci</span><span class="p">)</span> <span class="n">mriki</span><span class="nd">@RikinoMac</span> <span class="n">prml</span> <span class="o">%</span> <span class="n">python</span> <span class="n">script</span><span class="o">/</span><span class="n">cbow</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">h</span>
+<span class="n">usage</span><span class="p">:</span> <span class="n">cbow</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">learning_rate</span> <span class="n">LEARNING_RATE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">batch_size</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">embedding_dim</span> <span class="n">EMBEDDING_DIM</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">seed</span> <span class="n">SEED</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">max_epochs</span> <span class="n">MAX_EPOCHS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">device</span> <span class="n">DEVICE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">data_path</span> <span class="n">DATA_PATH</span><span class="p">]</span>
+               <span class="p">[</span><span class="o">--</span><span class="n">save_path</span> <span class="n">SAVE_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">window_size</span> <span class="n">WINDOW_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">topn</span> <span class="n">TOPN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">query</span> <span class="n">QUERY</span><span class="p">]</span>
+
+<span class="n">CBOWの訓練を行う</span>
+
+<span class="n">options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">learning_rate</span> <span class="n">LEARNING_RATE</span>
+  <span class="o">--</span><span class="n">batch_size</span> <span class="n">BATCH_SIZE</span>
+  <span class="o">--</span><span class="n">embedding_dim</span> <span class="n">EMBEDDING_DIM</span>
+  <span class="o">--</span><span class="n">seed</span> <span class="n">SEED</span>
+  <span class="o">--</span><span class="n">max_epochs</span> <span class="n">MAX_EPOCHS</span>
+  <span class="o">--</span><span class="n">device</span> <span class="n">DEVICE</span>
+  <span class="o">--</span><span class="n">data_path</span> <span class="n">DATA_PATH</span>
+                        <span class="n">訓練用コーパスの保存場所</span>
+  <span class="o">--</span><span class="n">save_path</span> <span class="n">SAVE_PATH</span>
+                        <span class="n">学習済みモデルの保存場所</span>
+  <span class="o">--</span><span class="n">window_size</span> <span class="n">WINDOW_SIZE</span>
+  <span class="o">--</span><span class="n">topn</span> <span class="n">TOPN</span>           <span class="n">検索単語数</span>
+  <span class="o">--</span><span class="n">query</span> <span class="n">QUERY</span>         <span class="n">文字列を渡すと類似する単語をtopn個検索する</span>
+</pre></div>
+</div>
+<p>自分自身しか使わないプログラムであっても，数週間も経てば使い方を忘れてしまうかもしれません．未来の自分のためにも，これらやスクリプト中のコメントを含めたドキュメントを必ず書くようにしましょう．</p>
+</section>
+<section id="id3">
+<h3><span class="section-number">13.7.2.2. </span>実行<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
+<p>端末エミュレータから実行できる<code class="docutils literal notranslate"><span class="pre">ls</span></code>や<code class="docutils literal notranslate"><span class="pre">emacs</span></code>のようなコマンドと同様に，ここで作成したアプリも端末エミュレータからコマンドとして実行できます．</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">datasci</span><span class="p">)</span> <span class="n">mriki</span><span class="nd">@RikinoMac</span> <span class="n">prml</span> <span class="o">%</span> <span class="n">python</span> <span class="n">script</span><span class="o">/</span><span class="n">cbow</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">save_path</span><span class="o">=</span><span class="n">models</span><span class="o">/</span><span class="n">CBoW_ep10_lr0</span><span class="mf">.01</span><span class="n">_b512_emb50</span><span class="o">.</span><span class="n">pth</span> <span class="o">--</span><span class="n">query</span><span class="o">=</span><span class="n">鳥</span>
+<span class="n">文書数</span><span class="p">:</span> <span class="mi">564194</span><span class="p">,</span> <span class="n">語彙数</span><span class="p">:</span> <span class="mi">63269</span>
+<span class="n">前処理後の文書数</span><span class="p">:</span> <span class="mi">454833</span>
+<span class="n">contextsの数</span><span class="p">:</span> <span class="mi">8109771</span>
+<span class="n">loading</span> <span class="n">pretrained</span> <span class="n">weights</span><span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">鳥</span>
+<span class="mi">1</span><span class="p">:</span><span class="n">自室</span>  <span class="mf">0.6886861324310303</span>
+<span class="mi">2</span><span class="p">:</span><span class="n">ラストシーン</span>  <span class="mf">0.685504674911499</span>
+<span class="mi">3</span><span class="p">:</span><span class="n">世に</span>  <span class="mf">0.6764041185379028</span>
+<span class="mi">4</span><span class="p">:</span><span class="n">不適切</span>        <span class="mf">0.6689269542694092</span>
+<span class="mi">5</span><span class="p">:</span><span class="n">大洲</span>  <span class="mf">0.6603158712387085</span>
+</pre></div>
+</div>
+<p>(1epochも終わってないモデルの結果なので似た単語は全然出ていませんが，ちゃんと学習したモデルならもう少しまともな結果になるはずです…)</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "datasci"
+        },
+        kernelOptions: {
+            name: "datasci",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'datasci'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="word2vec.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">13. </span>Word2Vec</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="skipgram.myst.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">13.8. </span>[発展課題]skip_gram.py</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 目次
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">13.7.1. 実装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">13.7.2. 実行結果</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">13.7.2.1. Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">13.7.2.2. 実行</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+著者 Riki Murakami
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

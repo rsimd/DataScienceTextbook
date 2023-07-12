@@ -1,0 +1,1489 @@
+
+
+<!DOCTYPE html>
+
+
+<html >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>15. Convolutional Neural Network &#8212; 入門：ニューラルネットワーク</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"tex": {"macros": {"bbN": "\\mathbb{N}", "bbR": "\\mathbb{R}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cnn';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="16. Auto Encoder" href="ae.html" />
+    <link rel="prev" title="14.4. LSTM" href="lstm.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="None"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Textbook
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. 導入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.myst.html">2. Pythonの前提知識</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E8%A7%A3%E8%AA%AC.html">3. k-NN (k-Nearest Neighbors Classifier; k近傍法)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html">3.3. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85_ans.html">3.4. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-Means_%E8%AA%B2%E9%A1%8C.html">4. k平均法(k-Means)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LinearRegression.html">5. 線形回帰 （Linear Regression）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegression.html">6. ロジスティック回帰 (Logistic Regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SVD_Singular%20Value%20Decomposition.html">7. SVD (Singular Value Decomposition; 特異値分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_Principal%20Component%20Analysis.html">8. PCA (Principal Component Analysis; 主成分分析)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMF_Non-Negative%20Matrix%20Factorization.html">9. NMF (Non-Negative Matrix Factorization; 非負値行列因子分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RF_RandomForest%E3%81%AE%E5%AE%9F%E8%A3%85.html">10. RF (Random Forest; ランダムフォレスト)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="perceptron.html">11. パーセプトロン（Perceptron）</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="perceptron.myst.html">11.8. perceptron.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlp.html">12. 多層パーセプトロン (MLP: Multi-Layer Perceptron)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="matrix_ops.html">12.5. 行列計算で全結合層の計算が実装できる？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activation_functions.html">12.6. 活性化関数（Activation Functions）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp_iris.myst.html">12.7. [課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="word2vec.html">13. Word2Vec</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbow.myst.html">13.7. cbow.pyのサンプルコード</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skipgram.myst.html">13.8. [発展課題]skip_gram.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skip_gram.html">13.9. Skip-Gram</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="rnn.html">14. Recurrent Neural Network</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="lstm.html">14.4. LSTM</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">15. Convolutional Neural Network</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="ae.html">16. Auto Encoder</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="ae_mnist.myst.html">16.6. ae_mnist_animation.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ae.myst.html">16.7. [課題] ae_fmnist_animation.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bib.myst.html">17. 参考文献</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="ソースリポジトリ"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/edit/main/docs/cnn.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/issues/new?title=Issue%20on%20page%20%2Fcnn.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="問題を報告"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="このページをダウンロード">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/cnn.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="ソースファイルをダウンロード"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="PDFに印刷"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="全画面モード"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Convolutional Neural Network</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 目次 </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cnn">15.1. CNNとは</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">15.1.1. CNNの歴史</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">15.1.2. 初期のCNNの有名なモデル</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lenet">15.1.2.1. LeNet</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alexnet">15.1.2.2. AlexNet</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#vgg">15.1.2.3. VGG</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#googlenet">15.1.2.4. GoogLeNet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">15.2. 画像データ</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">15.2.1. 画像データの配列</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">15.3. CNNのアーキテクチャ</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">15.3.1. 画像データのためのニューラルネットワーク</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">15.3.2. 畳み込み</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">15.3.3. パディング</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">15.3.4. プーリング</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">15.4. CNNの実装</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">15.4.1. 作成するアプリケーションのイメージ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">15.4.2. データの準備</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">15.4.3. CNNクラス</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">15.4.4. 学習スクリプト</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#skorch">15.4.4.1. skorchを使った簡易版</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">15.4.4.2. フルスクラッチ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">15.5. 課題</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id27">15.6. 参考文献</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="convolutional-neural-network">
+<h1><span class="section-number">15. </span>Convolutional Neural Network<a class="headerlink" href="#convolutional-neural-network" title="Permalink to this headline">#</a></h1>
+<p>CNN, 畳み込みニューラルネットワーク <span id="id1">[<a class="reference internal" href="#id48" title="岡谷 貴之. 画像認識のための深層学習の研究動向 : 畳込みニューラルネットワークとその利用法の発展(ニューラルネットワーク研究のフロンティア). 人工知能, 31(2):169–179, 2016. doi:10.11517/jjsai.31.2\_169.">貴之, 2016</a>]</span></p>
+<p><img alt="" src="https://cdn-ak.f.st-hatena.com/images/fotolife/n/nkdkccmbr/20161006/20161006220128.png" /><br />
+CNNのイメージ 出典：<a class="reference external" href="https://nkdkccmbr.hateblo.jp/entry/2016/10/06/222245">畳み込みニューラルネットワーク(CNN) – ニューラルネットワーク・DeepLearningなどの画像素材　プレゼン・ゼミなどに【WTFPL】</a></p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># packageのimport</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">tqdm.std</span> <span class="kn">import</span> <span class="n">trange</span><span class="p">,</span><span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="c1"># pytorch関連のimport</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span> 
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span> 
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span> 
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+<span class="n">SEED</span> <span class="o">=</span> <span class="mi">2023_6_27</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">src</span> <span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">utils</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="cnn">
+<h2><span class="section-number">15.1. </span>CNNとは<a class="headerlink" href="#cnn" title="Permalink to this headline">#</a></h2>
+<section id="id2">
+<h3><span class="section-number">15.1.1. </span>CNNの歴史<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>動物の視覚屋の神経細胞の二つの動き：</p>
+<ol class="arabic simple">
+<li><p>画像の濃淡パターンを検出する機能</p></li>
+<li><p>物体の位置ズレを許容して同一物体だとみなす機能</p></li>
+</ol>
+<p>を再現したモデルがCNNです．これを組み込んだ最初期のモデルはネオコグニトロン（Negcognitron）と呼ばれ，福島邦彦氏によって発表されました<span id="id3">[<a class="reference internal" href="#id46" title="K Fukushima. Neocognitron: a self organizing neural network model for a mechanism of pattern recognition unaffected by shift in position. Biol. Cybern., 36(4):193–202, 1980. doi:10.1007/BF00344251.">Fukushima, 1980</a>]</span>．訓練は自己組織化によって行われます．</p>
+<blockquote>
+<div><p><img alt="" src="_images/neocognitron2.png" /><br />
+出典：<a class="reference external" href="http://www.visionsociety.jp/vision/vol29-1/29-1_1.pdf">視覚パターン認識とネオコグニトロン |福島邦彦</a></p>
+</div></blockquote>
+<p>現在主流のCNNはネオコグニトロンをベースに，訓練方法を誤差逆伝播法に変えられています．そしてその後にCNNは更に深層化し，様々な画像認識タスクで当時のSoTA（State-of-the-Art, 現時点での最先端レベルの性能）を叩き出しました．特に有名なのが2012年のILSVRC（ImageNet Large Scale Visual Recognition Challenge）という画像認識コンペティションでしょう．ここで<a class="reference external" href="https://scholar.google.is/citations?user=JicYPdAAAAAJ">Geoffrey Everest Hinton</a>らのチームがAlexNetというCNNで，これまでの誤差率を10%以上を改善し，大成功を収めたのが有名です．<span id="id4">[<a class="reference internal" href="#id47" title="Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. Adv. Neural Inf. Process. Syst., 2012.">Krizhevsky, Sutskever, and Hinton, 2012</a>]</span></p>
+</section>
+<section id="id5">
+<h3><span class="section-number">15.1.2. </span>初期のCNNの有名なモデル<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h3>
+<section id="lenet">
+<h4><span class="section-number">15.1.2.1. </span>LeNet<a class="headerlink" href="#lenet" title="Permalink to this headline">#</a></h4>
+<p>基本的なCNNアーキテクチャのモデルです．</p>
+<p>関係する論文：</p>
+<ul class="simple">
+<li><p><span id="id6">[<a class="reference internal" href="#id45" title="Y LeCun, B Boser, J S Denker, D Henderson, R E Howard, W Hubbard, and L D Jackel. Backpropagation applied to handwritten zip code recognition. Neural Comput., 1(4):541–551, December 1989. doi:10.1162/neco.1989.1.4.541.">LeCun, Boser, Denker, Henderson, Howard, Hubbard, and Jackel, 1989</a>]</span></p></li>
+<li><p><span id="id7">[<a class="reference internal" href="#id43" title="Y Le Cun, B Boser, J S Denker, R E Howard, W Habbard, L D Jackel, and D Henderson. Handwritten digit recognition with a back-propagation network. In Advances in neural information processing systems 2, pages 396–404. Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, June 1990.">Cun, Boser, Denker, Howard, Habbard, Jackel, and Henderson, 1990</a>]</span></p></li>
+<li><p><span id="id8">[<a class="reference internal" href="#id44" title="Y Lecun, L Bottou, Y Bengio, and P Haffner. Gradient-based learning applied to document recognition. Proc. IEEE, 86(11):2278–2324, November 1998. doi:10.1109/5.726791.">Lecun, Bottou, Bengio, and Haffner, 1998</a>]</span></p></li>
+</ul>
+</section>
+<section id="alexnet">
+<h4><span class="section-number">15.1.2.2. </span>AlexNet<a class="headerlink" href="#alexnet" title="Permalink to this headline">#</a></h4>
+<p>前述した通り，2012年のILSVRC（ImageNet Large Scale Visual Recognition Challenge）で優勝したモデル<span id="id9">[<a class="reference internal" href="#id47" title="Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. Adv. Neural Inf. Process. Syst., 2012.">Krizhevsky, Sutskever, and Hinton, 2012</a>]</span>．<br />
+これまでの誤差率を10%以上を改善し，Deep Learningブームを引き起こしました．</p>
+<p>また，ImageNetという大規模画像データセット<span id="id10">[<a class="reference internal" href="#id41" title="Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. ImageNet: a large-scale hierarchical image database. In 2009 IEEE Conference on Computer Vision and Pattern Recognition, 248–255. June 2009. doi:10.1109/CVPR.2009.5206848.">Deng, Dong, Socher, Li, Li, and Fei-Fei, 2009</a>]</span>自体の登場も，CNNの発展に大きく寄与しました．</p>
+</section>
+<section id="vgg">
+<h4><span class="section-number">15.1.2.3. </span>VGG<a class="headerlink" href="#vgg" title="Permalink to this headline">#</a></h4>
+<p>2014年のILSVRCにおけるImageNetを用いた画像認識精度のコンペティションで画像分類部門で2位、物体のローカライゼーション部門で1位を記録したモデルです．<span id="id11">[<a class="reference internal" href="#id42">Simonyan and Zisserman, 2014</a>]</span><br />
+当時では大きな数である（Conv, MaxPool, Linearを合計して）16層のモデルです．</p>
+</section>
+<section id="googlenet">
+<h4><span class="section-number">15.1.2.4. </span>GoogLeNet<a class="headerlink" href="#googlenet" title="Permalink to this headline">#</a></h4>
+<p>InceptionNetと名付けられたモデルの中の最初のバージョン，Inception v1はGoogLeNetとも呼ばれています．<span id="id12">[<a class="reference internal" href="#id40" title="Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich. Going deeper with convolutions. In 2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 1–9. IEEE, June 2015. doi:10.1109/cvpr.2015.7298594.">Szegedy, Liu, Jia, Sermanet, Reed, Anguelov, Erhan, Vanhoucke, and Rabinovich, 2015</a>]</span></p>
+<blockquote>
+<div><p>複数の畳み込み層やpooling層から構成されるInceptionモジュールと呼ばれる小さなネットワーク (micro networks) を定義し，これを通常の畳み込み層のように重ねていくことで1つの大きなCNNを作り上げている点である．<br />
+引用：<a class="reference external" href="https://qiita.com/yu4u/items/7e93c454c9410c4b5427#googlenet-2014">畳み込みニューラルネットワークの最新研究動向 (〜2017)</a></p>
+</div></blockquote>
+</section>
+</section>
+</section>
+<section id="id13">
+<h2><span class="section-number">15.2. </span>画像データ<a class="headerlink" href="#id13" title="Permalink to this headline">#</a></h2>
+<section id="id14">
+<h3><span class="section-number">15.2.1. </span>画像データの配列<a class="headerlink" href="#id14" title="Permalink to this headline">#</a></h3>
+<p>iris datasetは一つのデータが一次元配列で表現されていました．これに対してこれから扱う画像データは：</p>
+<ul class="simple">
+<li><p>各ピクセルがグレースケールの色情報を持っている時，一つのデータは2次元配列として表現されます．</p></li>
+<li><p>各ピクセルがRGBの色情報を持っている時，一つのデータは3次元配列として表現されます．</p></li>
+</ul>
+<p><img alt="" src="https://fgnt.github.io/python_crashkurs_doc/_images/numpy_array_t.png" /><br />
+出典：<a class="reference external" href="https://fgnt.github.io/python_crashkurs_doc/include/numpy.html">Python Tutorial</a></p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;./figs/cnn/stablediffusion_dog_grayscale.jpeg&quot;</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># 画像はgrayスケールで作成したはずですが，実際には3色持っているので配列を見せる時は変換しています．</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;このようなグレースケールの画像ならば，二次元配列で表現することができます：&quot;</span><span class="p">)</span>
+<span class="n">gray_img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gray_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gray_img</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/e667debf54045186c4599513468fdbda66f35eeba91a719b5accfd1a6bb75120.png" src="_images/e667debf54045186c4599513468fdbda66f35eeba91a719b5accfd1a6bb75120.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>このようなグレースケールの画像ならば，二次元配列で表現することができます：
+(512, 512)
+[[40 40 40 ... 67 67 67]
+ [42 42 41 ... 67 67 67]
+ [44 44 43 ... 68 68 68]
+ ...
+ [74 80 75 ... 37 46 44]
+ [62 74 74 ... 37 46 52]
+ [58 67 74 ... 51 53 59]]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;./figs/cnn/stablediffusion_dog.jpeg&quot;</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;このようなカラー画像だとRGBの3チャネルが必要なので，三次元配列になります：&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">img</span><span class="p">[:</span><span class="mi">2</span><span class="p">,:,:])</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/86a571f5b330a6f11334d0950c49152b31cb54454f820fa7423893258c043217.png" src="_images/86a571f5b330a6f11334d0950c49152b31cb54454f820fa7423893258c043217.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>このようなカラー画像だとRGBの3チャネルが必要なので，三次元配列になります：
+(512, 512, 3)
+[[[118 146 181]
+  [129 157 192]
+  [129 156 193]
+  ...
+  [102  94  87]
+  [108 100  93]
+  [104  96  89]]
+
+ [[113 141 176]
+  [124 152 187]
+  [126 153 190]
+  ...
+  [ 99  91  84]
+  [100  92  85]
+  [ 97  89  82]]]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2><span class="section-number">15.3. </span>CNNのアーキテクチャ<a class="headerlink" href="#id15" title="Permalink to this headline">#</a></h2>
+<section id="id16">
+<h3><span class="section-number">15.3.1. </span>画像データのためのニューラルネットワーク<a class="headerlink" href="#id16" title="Permalink to this headline">#</a></h3>
+<p>さて，MLPでは二次元配列の位置情報をうまく扱うことができませんので，仮にMLPにgrayスケールの画像を入力したいならば，一つのデータが一次元配列で表現されるようにshapeを変える必要があります．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;オリジナル：&quot;</span><span class="p">,</span> <span class="n">gray_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;変換後：&quot;</span><span class="p">,</span> <span class="n">gray_img</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>オリジナル： (512, 512)
+変換後： (262144,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>しかし画像ですからこの二次元配列は位置情報自体が意味を持っています．これでは画像データをうまく扱うことはできないでしょう．そこでCNNの登場です．</p>
+<p><img alt="" src="https://image.itmedia.co.jp/ait/articles/1804/17/di-21.gif" /><br />
+出典：<a class="reference external" href="https://atmarkit.itmedia.co.jp/ait/articles/1804/17/news127_3.html">Lesson 2　機械学習やディープラーニングには、どんな手法があるの？</a></p>
+</section>
+<section id="id17">
+<h3><span class="section-number">15.3.2. </span>畳み込み<a class="headerlink" href="#id17" title="Permalink to this headline">#</a></h3>
+<p>畳み込み（convolution）は画像データから特徴を抽出するためによく用いられる操作です．<br />
+あるカーネルに着目して，入力画像が1チャネルの場合の計算の様子を見てみましょう．</p>
+<p><img alt="" src="_images/convops_anime.gif" /><br />
+図：畳み込み処理の仕組み（簡単のためにバイアスを描いていませんが，使われる場合もあります．）</p>
+<p><strong>フィルタ</strong> と呼ばれる行列を使って，画像の特徴を抽出する作業を <strong>畳み込み</strong> と呼びます．画像左上から，フィルタとそれに対応するピクセルを掛け合わせて，総和をとります．この操作を画像の右下まで続けて新しい二次元配列を得ます．<br />
+これを <strong>特徴マップ</strong> と呼びます．<br />
+尚，ウィンドウを動かす幅を <strong>ストライド（stride）</strong> と呼びます．上の図ではStrideが1，カーネルサイズが3x3です．</p>
+<p>数式にして少し整理してみましょう．特徴マップのある要素を<span class="math notranslate nohighlight">\(a_{i,j}^{(k)}\)</span>と書くことにします．これを求める手順をおさらいします．</p>
+<p>高さ<span class="math notranslate nohighlight">\(H\)</span>, 幅<span class="math notranslate nohighlight">\(W\)</span>とします．インプットデータが1チャネルだとすると：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{X} = \left(
+\begin{array}{c|ccc} 
+  x_{1,1}^{(c)} &amp; x_{1,2}^{(c)} &amp; \dots  &amp; x_{1,W}^{(c)} \\ \hline
+  x_{2,1}^{(c)} &amp; x_{2,2}^{(c)} &amp; \dots  &amp; x_{2,W}^{(c)} \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+  x_{H,1}^{(c)} &amp; x_{H,2}^{(c)} &amp; \dots  &amp; x_{H,W}^{(c)}
+\end{array} 
+\right)
+\in \mathbb{R}^{H \times W}\end{split}\]</div>
+<p>また，カーネルサイズを<span class="math notranslate nohighlight">\(m \times n\)</span>として，<span class="math notranslate nohighlight">\(K\)</span>個のカーネルのカーネル<span class="math notranslate nohighlight">\(k\)</span>に着目すると：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{W}^{(k)} = \left(
+\begin{array}{c|ccc} 
+  w_{1,1}^{(k)} &amp; w_{1,2}^{(k)} &amp; \dots  &amp; w_{1,n}^{(k)} \\ \hline
+  w_{2,1}^{(k)} &amp; w_{2,2}^{(k)} &amp; \dots  &amp; w_{2,n}^{(k)} \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+  w_{m,1}^{(k)} &amp; w_{m,2}^{(k)} &amp; \dots  &amp; w_{m,n}^{(k)}
+\end{array} 
+\right)
+\in \mathbb{R}^{m \times n}
+\end{split}\]</div>
+<p>最後に，biasは<span class="math notranslate nohighlight">\(K\)</span>個あるので：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{b} = 
+\begin{pmatrix}
+b^{(1)} \\
+b^{(2)} \\
+\vdots \\
+b^{(k)} \\
+\vdots \\
+b^{(K)}
+\end{pmatrix}
+\in \mathbb{R}^{K}
+\end{split}\]</div>
+<p>畳み込み層では行列の左上から右下にカーネルを走査させていきますが，<span class="math notranslate nohighlight">\(x_{i,j}\)</span>に着目すると，その時点の畳み込み処理の結果<span class="math notranslate nohighlight">\(a_{i,j}^{(k)}\)</span>は以下のように求まります．</p>
+<div class="math notranslate nohighlight">
+\[
+a_{i,j}^{(k)} = \sum_{s=1}^{m}\sum_{t=1}^{n}w_{s,t}^{(k)}x_{i+s,j+t}+b^{(k)}
+\]</div>
+<p>畳み込み層をエクセルで実装すると以下のようになります．</p>
+<p><img alt="" src="_images/conv_full.png" /></p>
+<p>また，普通は入力画像がRGBの3チャネルであることが多いので，その場合の畳み込み演算の様子も見ておきましょう．</p>
+<p><img alt="" src="https://miro.medium.com/v2/resize:fit:1400/1*QgiVWSD6GscHh9nt55EfXg.gif" /><br />
+出典：<a class="reference external" href="https://medium.com/analytics-vidhya/everything-you-need-to-know-about-convolutional-neural-networks-cnns-3a82f7aa29c5">Everything you need to know about Convolutional Neural Networks (CNNs)</a></p>
+<p>一つのカーネルは<span class="math notranslate nohighlight">\(\text{縦} \times \text{横} \times \text{チャネル}\)</span>の配列を持っていることになり，これを任意の個数だけ用意することで畳み込み層が実装できます．</p>
+</section>
+<section id="id18">
+<h3><span class="section-number">15.3.3. </span>パディング<a class="headerlink" href="#id18" title="Permalink to this headline">#</a></h3>
+<p>画像によっては，端にあるピクセルに重要な特徴があることが考えられます．そんな時，画像の周りに適当な数字を敷き詰めることで画像を大きくする（枠をつける）ことで対応します．これを <strong>パディング（padding）</strong> と呼びます．</p>
+<p><img alt="" src="_images/padding.png" /></p>
+</section>
+<section id="id19">
+<h3><span class="section-number">15.3.4. </span>プーリング<a class="headerlink" href="#id19" title="Permalink to this headline">#</a></h3>
+<p><strong>プーリング</strong> は，任意のサイズ（例えば2x2）ごとに対象の範囲を何かしらの代表値に置き換える処理です．処理の流れはカーネルサイズとストライドサイズが同じ畳み込みのように見えます．基本的にここでのスライディングウィンドウは前後で被りがないので，特徴マップはチャネル数は変わらないままでサイズ（縦と横）だけが小さくなります．</p>
+<ul class="simple">
+<li><p>Max Pooling:</p>
+<ul>
+<li><p>特徴マップに対してスライディングウィンドウ処理を行い，各カーネルごとにその範囲を最大値に置き換えてダウンサンプリングします．</p></li>
+</ul>
+</li>
+<li><p>Average Pooling:</p>
+<ul>
+<li><p>特徴マップに対してスライディングウィンドウ処理を行い，各カーネルごとにその範囲を平均値に置き換えてダウンサンプリングします．</p></li>
+</ul>
+</li>
+</ul>
+<p><img alt="" src="_images/pooling.gif" /><br />
+図：Pooling処理の仕組み</p>
+<p><img alt="" src="_images/pooling_excel.png" /></p>
+</section>
+</section>
+<section id="id20">
+<h2><span class="section-number">15.4. </span>CNNの実装<a class="headerlink" href="#id20" title="Permalink to this headline">#</a></h2>
+<section id="id21">
+<h3><span class="section-number">15.4.1. </span>作成するアプリケーションのイメージ<a class="headerlink" href="#id21" title="Permalink to this headline">#</a></h3>
+<p>ここでは0~9の数字の手描き文字認識アプリをCNNで実装します．言い換えると，手書きの数字の画像データを受け取って，それを0~9のクラスに分類するタスクです．  Hugging Face Spaces （機械学習のデモアプリが投稿されるサービス）にちょうど良いアプリが公開されていたので，実装例を確認しておきましょう．</p>
+<p>左枠に手書きで0~9のうち，どれかの数字を書いてみてください．右枠に認識結果が表示されます．</p>
+<iframe
+	src="https://chrisjay-simple-mnist-classification.hf.space"
+	frameborder="0"
+	width="850"
+	height="450"
+></iframe>
+<p>ここではWeb UIから実際に手書きで文字を書けるようになっていますが，今回はそこまでは行わずにベンチマークデータセットから画像データを取ってきて訓練とテストを行います．</p>
+</section>
+<section id="id22">
+<h3><span class="section-number">15.4.2. </span>データの準備<a class="headerlink" href="#id22" title="Permalink to this headline">#</a></h3>
+<p>今回はMNISTという手書き文字データセットを利用します．これはCVの世界でのirisのような有名なデータセットなので，pytorchに収録されています．</p>
+<p>ここで，データは[Batch size,Channel,Height,Width]という順番になっている事に注意してください．Channelは色の数です．ここではグレースケールなので1です．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_MNIST</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+        <span class="c1">#transforms.Normalize((0.1307,), (0.3081,)),</span>
+        <span class="p">])</span>
+
+    <span class="n">train_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                           <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+    <span class="n">train_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span>
+                                               <span class="n">batch_size</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                                               <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                               <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">val_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                         <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+    <span class="n">val_loader</span> <span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">val_set</span><span class="p">,</span>
+                                            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                                            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                            <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span><span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;validation&quot;</span><span class="p">:</span><span class="n">val_loader</span><span class="p">,</span><span class="s2">&quot;train_dataset&quot;</span><span class="p">:</span> <span class="n">train_set</span><span class="p">,</span> <span class="s2">&quot;val_dataset&quot;</span><span class="p">:</span><span class="n">val_set</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>訓練データセットの最初の一枚を取り出して表示してみましょう．28x28の画像で，中身は手書きの数字になっています．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">load_MNIST</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">train_loader</span><span class="o">=</span> <span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+<span class="n">img</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">train_loader</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;img:&quot;</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">),</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;label:&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">label</span><span class="p">),</span> <span class="n">label</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">label</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">label</span><span class="p">,</span> <span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>img: &lt;class &#39;torch.Tensor&#39;&gt; torch.Size([1, 1, 28, 28]) torch.float32
+label: &lt;class &#39;torch.Tensor&#39;&gt; torch.Size([1]) torch.int64
+	 tensor([5])
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x1382f4640&gt;
+</pre></div>
+</div>
+<img alt="_images/4966ebd558c943e890e1cb7939ffd43cf02f97f7d5845ab740a4e702463e9c5e.png" src="_images/4966ebd558c943e890e1cb7939ffd43cf02f97f7d5845ab740a4e702463e9c5e.png" />
+</div>
+</div>
+<p>0~9の数字があるので，全部で10クラスの分類を行います．</p>
+</section>
+<section id="id23">
+<h3><span class="section-number">15.4.3. </span>CNNクラス<a class="headerlink" href="#id23" title="Permalink to this headline">#</a></h3>
+<p>PyTorchを使って実装するならば，これまで考えてきた難しいアーキテクチャのことは一度忘れて，ブロックを重ねるようにネットワークを作ることができます．ただし，MLPとは異なり，レイヤーを通った後のテンソルの形状がわかりにくいことに注意してください．</p>
+<p>例えば，畳み込み→プーリング→畳み込み→プーリング→MLP のようなネットワークの場合，入力されたテンソルには以下のような形状の変化が起こります．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">([</span><span class="mi">64</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">32</span> <span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># 第一引数（入力チャネル数）を決め打ちしておかないといけない</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">1600</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># 第一引数を決めうちしておかないといけない．</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>torch.Size([64, 1, 28, 28])
+torch.Size([64, 32, 26, 26])
+torch.Size([64, 32, 13, 13])
+torch.Size([64, 64, 11, 11])
+torch.Size([64, 64, 5, 5])
+torch.Size([64, 1600])
+</pre></div>
+</div>
+</div>
+</div>
+<p>入力画像を最初に適用するnn.Conv2dの第一引数と，畳み込みやプーリングを繰り返した後にnn.Flattenした際の特徴数の計算が難しそうです．
+以下のような関数でConv層の出力する画像の縦横サイズを求められるので，使ってみてください．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_output_shape</span><span class="p">(</span>
+        <span class="n">height</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> 
+        <span class="n">padding</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">kernel_size</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> 
+        <span class="n">stride</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">-&gt;</span><span class="nb">int</span><span class="p">:</span> 
+    <span class="n">new_height</span> <span class="o">=</span> <span class="p">(</span><span class="n">height</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">padding</span><span class="o">-</span><span class="n">kernel_size</span><span class="p">)</span><span class="o">/</span><span class="n">stride</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">new_height</span><span class="p">))</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">get_output_shape</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">get_output_shape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">get_output_shape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">get_output_shape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>26
+13
+11
+5
+</pre></div>
+</div>
+</div>
+</div>
+<p>では，単純なCNNをnn.Sequentialで作成します．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">build_cnn</span><span class="p">(</span><span class="n">in_channels</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    28*28の画像だけ受け付ける</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="c1"># 入力されるチャネル数</span>
+                  <span class="mi">32</span><span class="p">,</span> <span class="c1"># 出力したいチャネル数</span>
+                  <span class="mi">3</span><span class="p">,</span> <span class="c1"># カーネルサイズ</span>
+                  <span class="mi">1</span><span class="p">,</span> <span class="c1"># ストライド</span>
+                  <span class="mi">0</span><span class="p">,</span> <span class="c1"># パディング</span>
+                  <span class="p">),</span> 
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="c1"># カーネルサイズ </span>
+                     <span class="mi">2</span><span class="p">,</span> <span class="c1"># ストライド</span>
+                     <span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>               
+        <span class="n">nn</span><span class="o">.</span><span class="n">Dropout2d</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="o">*</span><span class="mi">5</span><span class="o">*</span><span class="mi">5</span><span class="p">,</span><span class="mi">128</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="n">n_classes</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="n">cnn</span> <span class="o">=</span> <span class="n">build_cnn</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">([</span><span class="mi">64</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="n">cnn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>torch.Size([64, 10])
+</pre></div>
+</div>
+</div>
+</div>
+<p>また，テンソルの形状を考えるのが面倒な場合は，以下のような<code class="docutils literal notranslate"><span class="pre">LazyHogehoge</span></code>（nn.LazyConv2d, nn.LazyLinearなど）を使うことで入力チャネルや入力特徴数の計算を省けます．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">build_lazy_cnn</span><span class="p">(</span><span class="n">n_classes</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    28*28の画像だけ受け付ける</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">LazyConv2d</span><span class="p">(</span><span class="c1">#in_channels, # 入力されるチャネル数</span>
+                  <span class="mi">32</span><span class="p">,</span> <span class="c1"># 出力したいチャネル数</span>
+                  <span class="mi">3</span><span class="p">,</span> <span class="c1"># カーネルサイズ</span>
+                  <span class="mi">1</span><span class="p">,</span> <span class="c1"># ストライド</span>
+                  <span class="mi">0</span><span class="p">,</span> <span class="c1"># パディング</span>
+                  <span class="p">),</span> 
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="c1"># カーネルサイズ </span>
+                     <span class="mi">2</span><span class="p">,</span> <span class="c1"># ストライド</span>
+                     <span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>               
+        <span class="n">nn</span><span class="o">.</span><span class="n">Dropout2d</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">LazyLinear</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="n">n_classes</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="c1"># 例1</span>
+<span class="n">_cnn</span> <span class="o">=</span> <span class="n">build_lazy_cnn</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">([</span><span class="mi">64</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">_cnn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># 例2</span>
+<span class="n">_cnn</span> <span class="o">=</span> <span class="n">build_lazy_cnn</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">([</span><span class="mi">64</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">53</span><span class="p">,</span><span class="mi">53</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">_cnn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>torch.Size([64, 4, 15, 15]) -&gt; torch.Size([64, 10])
+torch.Size([64, 3, 53, 53]) -&gt; torch.Size([64, 10])
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/mriki/.pyenv/versions/miniforge3-4.10.3-10/envs/datasci/lib/python3.10/site-packages/torch/nn/modules/lazy.py:180: UserWarning: Lazy modules are a new feature under heavy development so changes to the API or functionality can happen at any moment.
+  warnings.warn(&#39;Lazy modules are a new feature under heavy development &#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id24">
+<h3><span class="section-number">15.4.4. </span>学習スクリプト<a class="headerlink" href="#id24" title="Permalink to this headline">#</a></h3>
+<p>ここまで来ればMLPと同じような学習スクリプトで訓練することができます．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## ハイパーパラメータなどの設定</span>
+
+<span class="c1">#エポック数，バッジサイズ</span>
+<span class="n">max_epochs</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="c1">#データのロード</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">load_MNIST</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+
+<span class="c1">#GPUが使えるときは使う</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="c1">#ネットワーク構造の構築</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">build_cnn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cpu
+Sequential(
+  (0): Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1))
+  (1): ReLU()
+  (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1))
+  (4): ReLU()
+  (5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (6): Dropout2d(p=0.25, inplace=False)
+  (7): Flatten(start_dim=1, end_dim=-1)
+  (8): Linear(in_features=1600, out_features=128, bias=True)
+  (9): ReLU()
+  (10): Linear(in_features=128, out_features=10, bias=True)
+)
+</pre></div>
+</div>
+</div>
+</div>
+<section id="skorch">
+<h4><span class="section-number">15.4.4.1. </span>skorchを使った簡易版<a class="headerlink" href="#skorch" title="Permalink to this headline">#</a></h4>
+<p>以下のコードは<a class="reference external" href="https://medium.datadriveninvestor.com/train-a-cnn-using-skorch-for-mnist-digit-recognition-53d7d2f971c7">こちら</a>を参考にしました．</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">skorch</span>
+<span class="kn">from</span> <span class="nn">skorch</span> <span class="kn">import</span> <span class="n">NeuralNetClassifier</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">NeuralNetClassifier</span><span class="p">(</span>
+    <span class="n">net</span><span class="p">,</span> 
+    <span class="n">max_epochs</span><span class="o">=</span><span class="n">max_epochs</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;train_dataset&quot;</span><span class="p">]</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)])</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  epoch    train_loss    valid_acc    valid_loss      dur
+-------  ------------  -----------  ------------  -------
+      1        <span class=" -Color -Color-Cyan">0.9455</span>       <span class=" -Color -Color-Green">0.8973</span>        <span class=" -Color -Color-Magenta">0.3246</span>  18.1023
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;skorch.classifier.NeuralNetClassifier&#39;&gt;[initialized](
+  module_=Sequential(
+    (0): Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1))
+    (4): ReLU()
+    (5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (6): Dropout2d(p=0.25, inplace=False)
+    (7): Flatten(start_dim=1, end_dim=-1)
+    (8): Linear(in_features=1600, out_features=128, bias=True)
+    (9): ReLU()
+    (10): Linear(in_features=128, out_features=10, bias=True)
+  ),
+)
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>学習したtrainerの保存をする場合：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># saving</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some-file.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>保存されたtrainerを読み込む場合：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># loading</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some-file.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">trainer</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</aside>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">history</span><span class="p">[:,</span><span class="s2">&quot;train_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;train_loss&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">history</span><span class="p">[:,</span><span class="s2">&quot;valid_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;valid_loss&quot;</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;acc&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">history</span><span class="p">[:,</span><span class="s2">&quot;valid_acc&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;valid_acc&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;training history&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;training history&#39;)
+</pre></div>
+</div>
+<img alt="_images/486667095afc041da6c5f00ad66fa93e9f3934fbfa23cf1cfd2d0eec4096934a.png" src="_images/486667095afc041da6c5f00ad66fa93e9f3934fbfa23cf1cfd2d0eec4096934a.png" />
+</div>
+</div>
+</section>
+<section id="id25">
+<h4><span class="section-number">15.4.4.2. </span>フルスクラッチ<a class="headerlink" href="#id25" title="Permalink to this headline">#</a></h4>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cnn</span> <span class="o">=</span> <span class="n">cnn</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="c1">#学習結果の保存</span>
+<span class="n">history</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;train_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;validation_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;validation_acc&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+
+<span class="c1">#最適化方法の設定</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">net</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cpu
+Sequential(
+  (0): Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1))
+  (1): ReLU()
+  (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1))
+  (4): ReLU()
+  (5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (6): Dropout2d(p=0.25, inplace=False)
+  (7): Flatten(start_dim=1, end_dim=-1)
+  (8): Linear(in_features=1600, out_features=128, bias=True)
+  (9): ReLU()
+  (10): Linear(in_features=128, out_features=10, bias=True)
+)
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>モデルの保存をする場合は以下のコードを利用します．</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PATH</span> <span class="o">=</span> <span class="s2">&quot;./my_mnist_model.pt&quot;</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">PATH</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</aside>
+<p>学習コードです．</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_epochs</span><span class="p">):</span>
+    <span class="c1"># training step</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">train_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Train start&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]):</span>
+        <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span><span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># 勾配の初期化</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="c1"># 順伝搬 -&gt; 逆伝搬 -&gt; 最適化</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="c1"># 途中経過の表示</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training: </span><span class="si">{}</span><span class="s2"> epoch. </span><span class="si">{}</span><span class="s2"> iteration. Loss:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+    <span class="n">train_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training loss (ave.): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">train_loss</span><span class="p">))</span>
+    <span class="n">history</span><span class="p">[</span><span class="s2">&quot;train_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_loss</span><span class="p">)</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;validation step&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Validation start&quot;</span><span class="p">)</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">val_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]:</span>
+            <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span><span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+            <span class="n">output</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">val_loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">pred_y</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">accuracy</span> <span class="o">+=</span> <span class="n">pred_y</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">pred_y</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="n">val_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">])</span>
+    <span class="n">accuracy</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation loss: </span><span class="si">{}</span><span class="s2">, Accuracy: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val_loss</span><span class="p">,</span><span class="n">accuracy</span><span class="p">))</span>
+    <span class="n">history</span><span class="p">[</span><span class="s2">&quot;validation_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val_loss</span><span class="p">)</span>
+    <span class="n">history</span><span class="p">[</span><span class="s2">&quot;validation_acc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train start
+Training: 1 epoch. 100 iteration. Loss:0.37115180492401123
+Training: 1 epoch. 200 iteration. Loss:0.17168577015399933
+Training: 1 epoch. 300 iteration. Loss:0.19651196897029877
+Training: 1 epoch. 400 iteration. Loss:0.1328047811985016
+Training: 1 epoch. 500 iteration. Loss:0.10174187272787094
+Training: 1 epoch. 600 iteration. Loss:0.1402805894613266
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">22</span><span class="p">],</span> <span class="n">line</span> <span class="mi">15</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="ne">---&gt; </span><span class="mi">15</span> <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="c1"># 途中経過の表示</span>
+
+<span class="nn">File ~/.pyenv/versions/miniforge3-4.10.3-10/envs/datasci/lib/python3.10/site-packages/torch/_tensor.py:487,</span> in <span class="ni">Tensor.backward</span><span class="nt">(self, gradient, retain_graph, create_graph, inputs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">477</span> <span class="k">if</span> <span class="n">has_torch_function_unary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">478</span>     <span class="k">return</span> <span class="n">handle_torch_function</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">479</span>         <span class="n">Tensor</span><span class="o">.</span><span class="n">backward</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">480</span>         <span class="p">(</span><span class="bp">self</span><span class="p">,),</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">485</span>         <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">486</span>     <span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">487</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">488</span>     <span class="bp">self</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> <span class="n">retain_graph</span><span class="p">,</span> <span class="n">create_graph</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span>
+<span class="g g-Whitespace">    </span><span class="mi">489</span> <span class="p">)</span>
+
+<span class="nn">File ~/.pyenv/versions/miniforge3-4.10.3-10/envs/datasci/lib/python3.10/site-packages/torch/autograd/__init__.py:200,</span> in <span class="ni">backward</span><span class="nt">(tensors, grad_tensors, retain_graph, create_graph, grad_variables, inputs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">195</span>     <span class="n">retain_graph</span> <span class="o">=</span> <span class="n">create_graph</span>
+<span class="g g-Whitespace">    </span><span class="mi">197</span> <span class="c1"># The reason we repeat same the comment below is that</span>
+<span class="g g-Whitespace">    </span><span class="mi">198</span> <span class="c1"># some Python versions print out the first line of a multi-line function</span>
+<span class="g g-Whitespace">    </span><span class="mi">199</span> <span class="c1"># calls in the traceback and some print out the last line</span>
+<span class="ne">--&gt; </span><span class="mi">200</span> <span class="n">Variable</span><span class="o">.</span><span class="n">_execution_engine</span><span class="o">.</span><span class="n">run_backward</span><span class="p">(</span>  <span class="c1"># Calls into the C++ engine to run the backward pass</span>
+<span class="g g-Whitespace">    </span><span class="mi">201</span>     <span class="n">tensors</span><span class="p">,</span> <span class="n">grad_tensors_</span><span class="p">,</span> <span class="n">retain_graph</span><span class="p">,</span> <span class="n">create_graph</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">202</span>     <span class="n">allow_unreachable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">accumulate_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+</section>
+</section>
+<section id="id26">
+<h2><span class="section-number">15.5. </span>課題<a class="headerlink" href="#id26" title="Permalink to this headline">#</a></h2>
+<p>[課題1] このノートではmnistデータセットのクラス分類を行うCNNを実装しました．これを主要なパラメータをCLIのオプションで変更できる形にしたプログラムcnn_mnist.pyを作成してください．</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>MLPやw2vの実装を参考にしながら，必要なハイパーパラメータやモデルの保存場所などを変更できるようなCLIのオプション（引数）を用意してください．（多分正解はない）</p>
+</div>
+<p>[課題2] CIFAR-10データセットのクラス分類を行うCNNを実装して，訓練とテストデータによる評価までを行うプログラムcnn_cifar10.pyを作成してください．主要なパラメータをCLIのオプションで変更できるようにすること．また，できるだけテスト正解率が高くなるようにモデルをチューニングして，デフォルトの引数として設定すること．</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>テストデータに対する正答率が高くなるようにチューニングするように求められていますが，テストデータは基本的に一番最後にだけ利用します．つまり代用として教師データから任意の割合で切り出したバリデーションデータをテストデータとして利用し，バリデーションデータに対する正答率が高くなるようにチューニングをします．その後，課題を提出する段階になったら本物のテストデータに対する正答率を求めてください．</p>
+</div>
+</section>
+<section id="id27">
+<h2><span class="section-number">15.6. </span>参考文献<a class="headerlink" href="#id27" title="Permalink to this headline">#</a></h2>
+<div class="docutils container" id="id28">
+<dl class="citation">
+<dt class="label" id="id43"><span class="brackets"><a class="fn-backref" href="#id7">CBD+90</a></span></dt>
+<dd><p>Y Le Cun, B Boser, J S Denker, R E Howard, W Habbard, L D Jackel, and D Henderson. Handwritten digit recognition with a back-propagation network. In <em>Advances in neural information processing systems 2</em>, pages 396–404. Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, June 1990.</p>
+</dd>
+<dt class="label" id="id41"><span class="brackets"><a class="fn-backref" href="#id10">DDS+09</a></span></dt>
+<dd><p>Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. ImageNet: a large-scale hierarchical image database. In <em>2009 IEEE Conference on Computer Vision and Pattern Recognition</em>, 248–255. June 2009. <a class="reference external" href="https://doi.org/10.1109/CVPR.2009.5206848">doi:10.1109/CVPR.2009.5206848</a>.</p>
+</dd>
+<dt class="label" id="id46"><span class="brackets"><a class="fn-backref" href="#id3">Fuk80</a></span></dt>
+<dd><p>K Fukushima. Neocognitron: a self organizing neural network model for a mechanism of pattern recognition unaffected by shift in position. <em>Biol. Cybern.</em>, 36(4):193–202, 1980. <a class="reference external" href="https://doi.org/10.1007/BF00344251">doi:10.1007/BF00344251</a>.</p>
+</dd>
+<dt class="label" id="id47"><span class="brackets">KSH12</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id9">2</a>)</span></dt>
+<dd><p>Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. <em>Adv. Neural Inf. Process. Syst.</em>, 2012.</p>
+</dd>
+<dt class="label" id="id45"><span class="brackets"><a class="fn-backref" href="#id6">LBD+89</a></span></dt>
+<dd><p>Y LeCun, B Boser, J S Denker, D Henderson, R E Howard, W Hubbard, and L D Jackel. Backpropagation applied to handwritten zip code recognition. <em>Neural Comput.</em>, 1(4):541–551, December 1989. <a class="reference external" href="https://doi.org/10.1162/neco.1989.1.4.541">doi:10.1162/neco.1989.1.4.541</a>.</p>
+</dd>
+<dt class="label" id="id44"><span class="brackets"><a class="fn-backref" href="#id8">LBBH98</a></span></dt>
+<dd><p>Y Lecun, L Bottou, Y Bengio, and P Haffner. Gradient-based learning applied to document recognition. <em>Proc. IEEE</em>, 86(11):2278–2324, November 1998. <a class="reference external" href="https://doi.org/10.1109/5.726791">doi:10.1109/5.726791</a>.</p>
+</dd>
+<dt class="label" id="id42"><span class="brackets"><a class="fn-backref" href="#id11">SZ14</a></span></dt>
+<dd><p><strong>missing journal in Simonyan2014-wx</strong></p>
+</dd>
+<dt class="label" id="id40"><span class="brackets"><a class="fn-backref" href="#id12">SLJ+15</a></span></dt>
+<dd><p>Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich. Going deeper with convolutions. In <em>2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</em>, 1–9. IEEE, June 2015. <a class="reference external" href="https://doi.org/10.1109/cvpr.2015.7298594">doi:10.1109/cvpr.2015.7298594</a>.</p>
+</dd>
+<dt class="label" id="id48"><span class="brackets"><a class="fn-backref" href="#id1">16</a></span></dt>
+<dd><p>岡谷 貴之. 画像認識のための深層学習の研究動向 : 畳込みニューラルネットワークとその利用法の発展(ニューラルネットワーク研究のフロンティア). <em>人工知能</em>, 31(2):169–179, 2016. <a class="reference external" href="https://doi.org/10.11517/jjsai.31.2\_169">doi:10.11517/jjsai.31.2\_169</a>.</p>
+</dd>
+</dl>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="lstm.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">14.4. </span>LSTM</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ae.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">16. </span>Auto Encoder</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 目次
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cnn">15.1. CNNとは</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">15.1.1. CNNの歴史</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">15.1.2. 初期のCNNの有名なモデル</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lenet">15.1.2.1. LeNet</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alexnet">15.1.2.2. AlexNet</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#vgg">15.1.2.3. VGG</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#googlenet">15.1.2.4. GoogLeNet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">15.2. 画像データ</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">15.2.1. 画像データの配列</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">15.3. CNNのアーキテクチャ</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">15.3.1. 画像データのためのニューラルネットワーク</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">15.3.2. 畳み込み</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">15.3.3. パディング</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">15.3.4. プーリング</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">15.4. CNNの実装</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">15.4.1. 作成するアプリケーションのイメージ</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">15.4.2. データの準備</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">15.4.3. CNNクラス</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">15.4.4. 学習スクリプト</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#skorch">15.4.4.1. skorchを使った簡易版</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">15.4.4.2. フルスクラッチ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">15.5. 課題</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id27">15.6. 参考文献</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+著者 Riki Murakami
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

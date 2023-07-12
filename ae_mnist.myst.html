@@ -1,0 +1,990 @@
+
+
+<!DOCTYPE html>
+
+
+<html >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>16.6. ae_mnist_animation.py &#8212; 入門：ニューラルネットワーク</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ae_mnist.myst';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="16.7. [課題] ae_fmnist_animation.py" href="ae.myst.html" />
+    <link rel="prev" title="16. Auto Encoder" href="ae.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="None"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Textbook
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. 導入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.myst.html">2. Pythonの前提知識</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E8%A7%A3%E8%AA%AC.html">3. k-NN (k-Nearest Neighbors Classifier; k近傍法)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html">3.3. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85_ans.html">3.4. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-Means_%E8%AA%B2%E9%A1%8C.html">4. k平均法(k-Means)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LinearRegression.html">5. 線形回帰 （Linear Regression）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegression.html">6. ロジスティック回帰 (Logistic Regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SVD_Singular%20Value%20Decomposition.html">7. SVD (Singular Value Decomposition; 特異値分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_Principal%20Component%20Analysis.html">8. PCA (Principal Component Analysis; 主成分分析)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMF_Non-Negative%20Matrix%20Factorization.html">9. NMF (Non-Negative Matrix Factorization; 非負値行列因子分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RF_RandomForest%E3%81%AE%E5%AE%9F%E8%A3%85.html">10. RF (Random Forest; ランダムフォレスト)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="perceptron.html">11. パーセプトロン（Perceptron）</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="perceptron.myst.html">11.8. perceptron.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlp.html">12. 多層パーセプトロン (MLP: Multi-Layer Perceptron)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="matrix_ops.html">12.5. 行列計算で全結合層の計算が実装できる？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activation_functions.html">12.6. 活性化関数（Activation Functions）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp_iris.myst.html">12.7. [課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="word2vec.html">13. Word2Vec</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbow.myst.html">13.7. cbow.pyのサンプルコード</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skipgram.myst.html">13.8. [発展課題]skip_gram.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skip_gram.html">13.9. Skip-Gram</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="rnn.html">14. Recurrent Neural Network</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="lstm.html">14.4. LSTM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cnn.html">15. Convolutional Neural Network</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ae.html">16. Auto Encoder</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">16.6. ae_mnist_animation.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ae.myst.html">16.7. [課題] ae_fmnist_animation.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bib.myst.html">17. 参考文献</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="ソースリポジトリ"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/edit/main/docs/ae_mnist.myst.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/issues/new?title=Issue%20on%20page%20%2Fae_mnist.myst.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="問題を報告"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="このページをダウンロード">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/ae_mnist.myst.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="ソースファイルをダウンロード"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="PDFに印刷"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="全画面モード"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>ae_mnist_animation.py</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 目次 </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">16.6.1. ae_mnist_animation.py</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">16.6.2. usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">16.6.3. 実行例：</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="ae-mnist-animation-py">
+<h1><span class="section-number">16.6. </span>ae_mnist_animation.py<a class="headerlink" href="#ae-mnist-animation-py" title="Permalink to this headline">#</a></h1>
+<p>このノートではmnistデータセットの次元圧縮を行うAEを実装しました．これの主要なパラメータをCLIオプションで変更できる形にしたプログラムae_mnist_animation.pyを作成してください．</p>
+<ul class="simple">
+<li><p>このスクリプトは最終的に，任意のファイル名でアニメーション①に相当するgifファイルを作成することが目的です．</p></li>
+</ul>
+<section id="id1">
+<h2><span class="section-number">16.6.1. </span>ae_mnist_animation.py<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<div class="dropdown admonition">
+<p class="admonition-title">pure pytorch</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># packageのimport</span>
+<span class="kn">import</span> <span class="nn">os</span> 
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">math</span> 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">trange</span><span class="p">,</span><span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;bmh&quot;</span><span class="p">)</span>
+
+<span class="c1"># pytorch関連のimport</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span> 
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span> 
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span> 
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+
+<span class="c1"># animation</span>
+<span class="kn">from</span> <span class="nn">matplotlib.animation</span> <span class="kn">import</span> <span class="n">ArtistAnimation</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span>
+
+<span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># 乱数のシードをここで固定しよう</span>
+    <span class="c1"># numpyの乱数シードを固定する</span>
+    <span class="c1"># torchの乱数シードを固定する</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">class</span> <span class="nc">SimpleAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">n_components</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="c1"># build layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">load_MNIST</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]:</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+        <span class="c1">#transforms.Normalize((0.1307,), (0.3081,)),</span>
+        <span class="c1">#transforms.Lambda(lambda x: torch.flatten(x))</span>
+        <span class="p">])</span>
+
+    <span class="n">train_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                           <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+    <span class="c1"># train_validation_split.</span>
+    <span class="c1"># see also https://qiita.com/takurooo/items/ba8c509eaab080e2752c#%E8%A7%A3%E6%B1%BA%E7%AD%962-torchutilsdatarandom_split.</span>
+    <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span> <span class="c1"># n_samples is 60000</span>
+    <span class="n">train_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span> <span class="c1"># train_size is 48000</span>
+    <span class="n">val_size</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">-</span> <span class="n">train_size</span> <span class="c1"># val_size is 48000</span>
+    <span class="n">train_set</span><span class="p">,</span> <span class="n">val_set</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">random_split</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="p">[</span><span class="n">train_size</span><span class="p">,</span> <span class="n">val_size</span><span class="p">])</span>
+
+    <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span>
+                              <span class="n">batch_size</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                              <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">val_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_set</span><span class="p">,</span>
+                            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+
+    <span class="n">test_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                         <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+    <span class="n">test_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">test_set</span><span class="p">,</span>
+                             <span class="n">batch_size</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                             <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span><span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;validation&quot;</span><span class="p">:</span><span class="n">val_loader</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="n">test_loader</span><span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">get_sample</span><span class="p">()</span><span class="o">-&gt;</span><span class="nb">list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),])</span>
+    <span class="n">test_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                         <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+    <span class="n">test_loader</span> <span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">test_set</span><span class="p">,</span>
+                                            <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                            <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">sample</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">max_epochs</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
+         <span class="n">batch_size</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> 
+         <span class="n">latent_dim</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+         <span class="n">learning_rate</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> 
+         <span class="n">device</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> 
+         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Any</span><span class="p">:</span>
+
+
+    <span class="c1">#学習結果の保存</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;train_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;validation_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;validation_acc&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;frames&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;学習過程の可視化&quot;&quot;&quot;</span>
+    <span class="c1"># 訓練中に利用する画像を用意しておく</span>
+    <span class="n">sample_imgs</span> <span class="o">=</span> <span class="n">get_sample</span><span class="p">()</span>
+
+    <span class="c1"># プロットの雛形を用意しておく</span>
+    <span class="n">fig_anime</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+    <span class="n">axs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fig_anime</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;/学習過程の可視化&quot;&quot;&quot;</span>
+
+    <span class="n">data_loader</span> <span class="o">=</span> <span class="n">load_MNIST</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleAE</span><span class="p">(</span><span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">max_epochs</span><span class="p">):</span>
+        <span class="c1"># training step</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">train_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]):</span>
+            <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span><span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># 勾配の初期化</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="c1"># 順伝搬 -&gt; 逆伝搬 -&gt; 最適化</span>
+            <span class="n">x_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">x_hat</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">train_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">])</span>
+        <span class="n">history</span><span class="p">[</span><span class="s2">&quot;train_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">train_loss</span><span class="p">))</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;validation step&quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">val_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]:</span>
+                <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span><span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">x_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">val_loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">x_hat</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">val_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_loader</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">])</span>
+        <span class="c1">#print(&quot;Validation loss: {}\n&quot;.format(val_loss))</span>
+        <span class="n">history</span><span class="p">[</span><span class="s2">&quot;validation_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">val_loss</span><span class="p">))</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;学習過程の可視化&quot;&quot;&quot;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">history</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+                <span class="n">art1</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sample_imgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+                            <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+                <span class="n">sample_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">sample_imgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+                <span class="n">history</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">art1</span><span class="p">)</span>
+                <span class="n">art2</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sample_hat</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+                                <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+                <span class="n">history</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">art2</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;/学習過程の可視化&quot;&quot;&quot;</span>
+        
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig_anime</span><span class="p">)</span> <span class="c1"># 余計な図を表示させないようにする</span>
+    <span class="n">anim</span> <span class="o">=</span> <span class="n">ArtistAnimation</span><span class="p">(</span><span class="n">fig_anime</span><span class="p">,</span> <span class="n">history</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">],</span> <span class="n">interval</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">anim</span>
+
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;AutoEncoderでMNISTの学習を行い，その学習過程をgifアニメーションにして保存する&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--device&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--learning_rate&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--save_path&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./ae_mnist.gif&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--max_epochs&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--batch_size&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--latent_dim&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">set_seed</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+    <span class="c1"># https://scrapbox.io/nwtgck/Python%E3%81%AEargparse%E3%81%AE%E3%83%91%E3%83%BC%E3%82%B9%E7%B5%90%E6%9E%9C%E3%81%AEvars()%E3%82%92%E4%BD%BF%E3%81%86%E3%81%A8dict%E3%81%AB%E3%81%A7%E3%81%8D%E3%82%8B</span>
+    <span class="n">anim</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span> 
+    <span class="n">anim</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">save_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="dropdown admonition">
+<p class="admonition-title">skorch</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># packageのimport</span>
+<span class="kn">import</span> <span class="nn">os</span> 
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">math</span> 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">trange</span><span class="p">,</span><span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;bmh&quot;</span><span class="p">)</span>
+
+<span class="c1"># pytorch関連のimport</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span> 
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span> 
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span> 
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+
+<span class="c1"># animation</span>
+<span class="kn">from</span> <span class="nn">matplotlib.animation</span> <span class="kn">import</span> <span class="n">ArtistAnimation</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">skorch</span> <span class="kn">import</span> <span class="n">NeuralNetRegressor</span>
+<span class="kn">import</span> <span class="nn">skorch</span> 
+
+<span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># 乱数のシードをここで固定しよう</span>
+    <span class="c1"># numpyの乱数シードを固定する</span>
+    <span class="c1"># torchの乱数シードを固定する</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">class</span> <span class="nc">SimpleAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">n_components</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="c1"># build layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">encoded</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">load_MNIST_skorch</span><span class="p">():</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+        <span class="c1">#transforms.Normalize((0.1307,), (0.3081,)),</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
+        <span class="p">])</span>
+
+    <span class="n">train_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                           <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+
+    <span class="n">test_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                         <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span><span class="n">train_set</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="n">test_set</span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">NeuralNetAE</span><span class="p">(</span><span class="n">NeuralNetRegressor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">encoded</span><span class="p">,</span> <span class="n">decoded</span> <span class="o">=</span> <span class="n">y_pred</span>
+        <span class="n">recons_loss</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_loss</span><span class="p">(</span><span class="n">decoded</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">recons_loss</span>
+    
+
+<span class="k">class</span> <span class="nc">ReconsImage</span><span class="p">(</span><span class="n">skorch</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_sample</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;0~9の数字の手書き文字画像をランダムに一枚ずつ適当に選ぶ&quot;&quot;&quot;</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),])</span>
+        <span class="n">test_set</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span><span class="p">,</span>
+                                            <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                            <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                            <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">test_set</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">sample</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;最初に一度だけ呼ばれる&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_imgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig_anime</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_anime</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">dataset_train</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset_valid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;epoch終了時に毎回呼ばれる&quot;&quot;&quot;</span>
+        <span class="n">net</span><span class="o">.</span><span class="n">module_</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+                <span class="n">art1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_imgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+                            <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">sample_hat</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">module_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_imgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+                <span class="n">frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">art1</span><span class="p">)</span>
+                <span class="n">art2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sample_hat</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+                                <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+                <span class="n">frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">art2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">dataset_train</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset_valid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;学習終了時に一回だけ呼ばれる&quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_anime</span><span class="p">)</span>
+
+
+
+
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;AutoEncoderでMNISTの学習を行い，その学習過程をgifアニメーションにして保存する&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--device&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--learning_rate&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--save_path&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./ae_mnist.gif&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--max_epochs&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--batch_size&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--latent_dim&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">set_seed</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">recons_image</span> <span class="o">=</span> <span class="n">ReconsImage</span><span class="p">()</span>
+    
+    <span class="n">trainer</span> <span class="o">=</span> <span class="n">NeuralNetAE</span><span class="p">(</span>
+        <span class="c1"># models</span>
+        <span class="n">SimpleAE</span><span class="p">(</span><span class="mi">28</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">),</span>
+        <span class="n">optimizer</span><span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">,</span>
+        
+        <span class="c1"># hyper-params</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">max_epochs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">,</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="n">train_split</span><span class="o">=</span><span class="n">skorch</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">ValidSplit</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="c1"># 0.2 を valid setとして利用</span>
+
+        <span class="c1"># callbacks</span>
+        <span class="n">callbacks</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;recons_image&quot;</span><span class="p">,</span> <span class="n">recons_image</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="c1"># prepare datasets</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_MNIST_skorch</span><span class="p">()</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)])</span> <span class="c1"># y_trainはダミーです．np.zeros(len(train_dataset))でもOK．</span>
+
+    <span class="c1"># training start!</span>
+    <span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">anim</span> <span class="o">=</span> <span class="n">ArtistAnimation</span><span class="p">(</span><span class="n">recons_image</span><span class="o">.</span><span class="n">fig_anime</span><span class="p">,</span> <span class="n">recons_image</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+    <span class="n">anim</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">save_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="usage">
+<h2><span class="section-number">16.6.2. </span>usage<a class="headerlink" href="#usage" title="Permalink to this headline">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(datasci) mriki@RikinoMac _prml % python ae_mnist_animation.py --help
+usage: ae_mnist_animation.py [-h] [--device DEVICE] [--learning_rate LEARNING_RATE] [--seed SEED] [--save_path SAVE_PATH] [--max_epochs MAX_EPOCHS] [--batch_size BATCH_SIZE] [--latent_dim LATENT_DIM]
+
+AutoEncoderでMNISTの学習を行い，その学習過程をgifアニメーションにして保存する
+
+options:
+  -h, --help            show this help message and exit
+  --device DEVICE
+  --learning_rate LEARNING_RATE
+  --seed SEED
+  --save_path SAVE_PATH
+  --max_epochs MAX_EPOCHS
+  --batch_size BATCH_SIZE
+  --latent_dim LATENT_DIM
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><span class="section-number">16.6.3. </span>実行例：<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(datasci) mriki@RikinoMac _prml % ipython ae_mnist_animation.py --seed 0
+[TerminalIPythonApp] WARNING | Unrecognized alias: &#39;seed&#39;, it will have no effect.
+Installed osx event loop hook.
+Shell is already running a gui event loop for osx. Call with no arguments to disable the current loop.
+100%|█████████████████████████████████████████████████████████████████████████| 50/50 [06:31&lt;00:00,  7.82s/it]
+</pre></div>
+</div>
+<p>作成されたgifファイル：<br />
+<img alt="" src="_images/ae_mnist.gif" /></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ae.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">16. </span>Auto Encoder</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ae.myst.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">16.7. </span>[課題] ae_fmnist_animation.py</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 目次
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">16.6.1. ae_mnist_animation.py</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">16.6.2. usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">16.6.3. 実行例：</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+著者 Riki Murakami
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,977 @@
+
+
+<!DOCTYPE html>
+
+
+<html >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>12.6. 活性化関数（Activation Functions） &#8212; 入門：ニューラルネットワーク</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"tex": {"macros": {"bbN": "\\mathbb{N}", "bbR": "\\mathbb{R}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'activation_functions';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="12.7. [課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化" href="mlp_iris.myst.html" />
+    <link rel="prev" title="12.5. 行列計算で全結合層の計算が実装できる？" href="matrix_ops.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="None"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Textbook
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. 導入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.myst.html">2. Pythonの前提知識</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E8%A7%A3%E8%AA%AC.html">3. k-NN (k-Nearest Neighbors Classifier; k近傍法)</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html">3.3. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85_ans.html">3.4. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-Means_%E8%AA%B2%E9%A1%8C.html">4. k平均法(k-Means)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LinearRegression.html">5. 線形回帰 （Linear Regression）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegression.html">6. ロジスティック回帰 (Logistic Regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SVD_Singular%20Value%20Decomposition.html">7. SVD (Singular Value Decomposition; 特異値分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_Principal%20Component%20Analysis.html">8. PCA (Principal Component Analysis; 主成分分析)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMF_Non-Negative%20Matrix%20Factorization.html">9. NMF (Non-Negative Matrix Factorization; 非負値行列因子分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RF_RandomForest%E3%81%AE%E5%AE%9F%E8%A3%85.html">10. RF (Random Forest; ランダムフォレスト)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="perceptron.html">11. パーセプトロン（Perceptron）</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="perceptron.myst.html">11.8. perceptron.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="mlp.html">12. 多層パーセプトロン (MLP: Multi-Layer Perceptron)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="matrix_ops.html">12.5. 行列計算で全結合層の計算が実装できる？</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">12.6. 活性化関数（Activation Functions）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp_iris.myst.html">12.7. [課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="word2vec.html">13. Word2Vec</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbow.myst.html">13.7. cbow.pyのサンプルコード</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skipgram.myst.html">13.8. [発展課題]skip_gram.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skip_gram.html">13.9. Skip-Gram</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="rnn.html">14. Recurrent Neural Network</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="lstm.html">14.4. LSTM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cnn.html">15. Convolutional Neural Network</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="ae.html">16. Auto Encoder</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="ae_mnist.myst.html">16.6. ae_mnist_animation.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ae.myst.html">16.7. [課題] ae_fmnist_animation.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bib.myst.html">17. 参考文献</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="ソースリポジトリ"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/edit/main/docs/activation_functions.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/issues/new?title=Issue%20on%20page%20%2Factivation_functions.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="問題を報告"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="このページをダウンロード">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/activation_functions.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="ソースファイルをダウンロード"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="PDFに印刷"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="全画面モード"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>活性化関数（Activation Functions）</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 目次 </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#logistic-sigmoid">12.6.1. Logistic Sigmoid (ロジスティック・シグモイド)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operatorname-tanh">12.6.2. <span class="math notranslate nohighlight">\(\operatorname{tanh}\)</span>（ハイパボリックタンジェント）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relu-rectified-linear-unit">12.6.3. ReLU（Rectified Linear Unit）/ランプ関数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softplus">12.6.4. SoftPlus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">12.6.5. Softmax</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="activation-functions">
+<h1><span class="section-number">12.6. </span>活性化関数（Activation Functions）<a class="headerlink" href="#activation-functions" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span> 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">Latex</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>活性化関数には様々種類があるので，代表的なものを列挙して紹介します．</p>
+<section id="logistic-sigmoid">
+<h2><span class="section-number">12.6.1. </span>Logistic Sigmoid (ロジスティック・シグモイド)<a class="headerlink" href="#logistic-sigmoid" title="Permalink to this headline">#</a></h2>
+<p>まずは符号関数をそのまま滑らかにしたような関数として，ロジスティックシグモイド関数が有名です．</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{sigmoid}(x; a) = \frac{1}{1+\operatorname{exp}(-ax)}
+\]</div>
+<p>ただし，MLの文脈では<span class="math notranslate nohighlight">\(a\)</span>は重要ではないので，<span class="math notranslate nohighlight">\(a=1\)</span>として固定されます．（これを標準シグモイド関数と呼びます）よって：</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{sigmoid}(x) = \frac{1}{1+\operatorname{exp}(-x)}
+\]</div>
+<p>この関数は <span class="math notranslate nohighlight">\((-\infty, \infty) \rightarrow(0, 1)\)</span> の短調増加連続関数です．<span class="math notranslate nohighlight">\(y=0, y=1\)</span> を漸近線として持っていて，確率値のような値域なのでMLPでは確率を出したい場合に使われることもあります．</p>
+<p>sigmoidの導関数：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{sigmoid}^{\prime}(x) &amp; =\left(\frac{1}{1+e^{-x}}\right)^{\prime} \\
+&amp; =\frac{e^{-x}}{\left(1+e^{-x}\right)^2} \\
+&amp; =\frac{1}{1+e^{-x}} \frac{e^{-x}}{1+e^{-x}} \\
+&amp; =\frac{1}{1+e^{-x}}\left(1-\frac{1}{1+e^{-x}}\right) \\
+&amp; =\operatorname{sigmoid}(x)(1-\operatorname{sigmoid}(x)) \\
+\end{aligned}
+\end{split}\]</div>
+<p>ただし微分の最大値が0.25であることに注意してください．（勾配消失が起きやすそうです）</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigmoid</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">sigmoid_prime</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Sigmoid function&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;forward&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Sigmoid function&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;forward&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sigmoid_prime</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;backward&quot;</span><span class="p">)</span>
+<span class="c1">#plt.title(&quot;$\operatorname{sigmoid}^{\prime}(x)$&quot;)</span>
+<span class="c1">#plt.xlabel(&quot;input $x$&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/ad09c6a316edac25a75b2dba560132a6589bd10417179a85f58448ac9f6c8354.png" src="_images/ad09c6a316edac25a75b2dba560132a6589bd10417179a85f58448ac9f6c8354.png" />
+</div>
+</div>
+</section>
+<section id="operatorname-tanh">
+<h2><span class="section-number">12.6.2. </span><span class="math notranslate nohighlight">\(\operatorname{tanh}\)</span>（ハイパボリックタンジェント）<a class="headerlink" href="#operatorname-tanh" title="Permalink to this headline">#</a></h2>
+<p>パーセプトロンのページでは，sign関数の出力を{1,-1}として使っていましたが，これに相当する関数として<span class="math notranslate nohighlight">\(\operatorname{tanh}\)</span> があります．tanhはsigmoid関数に非常によく似た形になっている（取り得る範囲が0~1と-1~1の違い）ことがわかります．そのため，ニューラルネットワークの実装ではsigmoidの代わりにtanhを利用することもよくあります．</p>
+<p>さて，tanhは双曲線関数と呼ばれているもので，これにはsinh（ハイパボリックサイン）,cosh（ハイパボリックコサイン）などの仲間がいます．活性化関数としてよく使われるのはtanhのみですが，それぞれ見ておきましょう．</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\sinh x &amp; =\frac{e^x-e^{-x}}{2} \\
+\cosh x &amp; =\frac{e^x+e^{-x}}{2} \\
+\tanh x &amp; =\frac{\sinh x}{\cosh x}=\frac{e^x-e^{-x}}{e^x+e^{-x}}
+\end{aligned}
+\end{split}\]</div>
+<p>この関数は <span class="math notranslate nohighlight">\((-\infty, \infty) \rightarrow(-1, 1)\)</span> の短調増加連続関数です．<span class="math notranslate nohighlight">\(y=-1, y=1\)</span> を漸近線として持っていて，sigmoidとよく似たグラフになります．</p>
+<p>tanhの導関数：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+(\tanh x)^{\prime}=&amp; \bigg( \frac{e^x-e^{-x}}{e^x+e^{-x}} \bigg)^{\prime}\\
+&amp;=\dfrac{(e^x+e^{-x})^2-(e^x-e^{-x})^2}{(e^x+e^{-x})^2}\\ 
+&amp;=\dfrac{4}{(e^x+e^{-x})^2} \\ 
+&amp;=\frac{1}{\operatorname{cosh} x} 
+\qquad \because  \cosh x=\frac{e^x+e^{-x}}{2}\\
+\end{aligned}
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sinh</span>
+<span class="n">np</span><span class="o">.</span><span class="n">cosh</span> 
+<span class="n">np</span><span class="o">.</span><span class="n">tanh</span> 
+
+<span class="n">tanh_prime</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\operatorname</span><span class="si">{tanh}</span><span class="s2">(x)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;forward&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">tanh_prime</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;backward&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\operatorname</span><span class="si">{tanh}</span><span class="s2">(x)^{\prime}$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;sinh&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cosh&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;hyperbolic functions&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)))(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;sigmoid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Hyperbolic tangent &amp; Logistic sigmoid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/ada0888deb355ed2cacc2ceb802001234cf2858d8d9594739deef29fd14ebeb9.png" src="_images/ada0888deb355ed2cacc2ceb802001234cf2858d8d9594739deef29fd14ebeb9.png" />
+</div>
+</div>
+</section>
+<section id="relu-rectified-linear-unit">
+<h2><span class="section-number">12.6.3. </span>ReLU（Rectified Linear Unit）/ランプ関数<a class="headerlink" href="#relu-rectified-linear-unit" title="Permalink to this headline">#</a></h2>
+<p>活性化関数として使う関数は，とりあえず非線形であればいい筈です．上の二つのように有界ではない活性化関数の一例としてReLU関数を紹介します．</p>
+<p>ReLUはDeep Learningと呼ばれる手法が出てきてから用いられることが多くなった活性化関数で，中身は非常にシンプルです．</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{ReLU}(x)&amp;=\operatorname{max}(x,0) \\
+    &amp;=\begin{cases}
+        0, &amp; x \leq 0 \\ 
+        x, &amp; x&gt;0 \\
+    \end{cases} \\
+\end{aligned}
+\end{split}\]</div>
+<p>また，これの導関数：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\operatorname{ReLU}^{\prime}(x)= \begin{cases}0, &amp; x&lt;0 \\ \text { NaN, } &amp; x=0 \\ 1, &amp; x&gt;0\end{cases}
+\end{split}\]</div>
+<p>この通り微分できない部分があるのですが，<span class="math notranslate nohighlight">\(x=0\)</span>はとりあえず正の数<span class="math notranslate nohighlight">\(x&lt;0\)</span>に含めて微分値0としてしまいます．</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># np.maxだと最大値を取ってしまうので注意</span>
+<span class="n">relu</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+<span class="nd">@np</span><span class="o">.</span><span class="n">vectorize</span>
+<span class="k">def</span> <span class="nf">relu_prime</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;ReLU functions&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">relu_prime</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\operatorname</span><span class="si">{ReLU}</span><span class="s2">^{\prime}(x)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/286a1e7b200db85df2a227ce4c145dd308f5db257268eb01205a98dac27dbeb6.png" src="_images/286a1e7b200db85df2a227ce4c145dd308f5db257268eb01205a98dac27dbeb6.png" />
+</div>
+</div>
+</section>
+<section id="softplus">
+<h2><span class="section-number">12.6.4. </span>SoftPlus<a class="headerlink" href="#softplus" title="Permalink to this headline">#</a></h2>
+<p>ReLUは非線形ですが滑らかではない関数でした．そこでReLUを滑らかにしたような関数として，SoftPlusを紹介します．</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{softplus}(x) = \log{(1+\operatorname{exp}(x))}
+\]</div>
+<p>これの導関数：</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}
+\begin{aligned}\\\begin{split}{\operatorname{softplus}(x)}^{\prime} 
+&amp;= {\log{(1+\operatorname{exp}(x))}}^{\prime} \\
+&amp;= \frac{1}{1+\operatorname{exp}(-x)} \\
+&amp;= \operatorname{sigmoid}(x) \\\end{split}\\\end{aligned}
+\end{aligned}\end{align} \]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">softplus</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">softplus_prime</span> <span class="o">=</span> <span class="n">sigmoid</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ReLU&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">softplus</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SoftPlus&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;SoftPlus function&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">relu_prime</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\operatorname</span><span class="si">{ReLU}</span><span class="s2">^{\prime}(x)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">softplus_prime</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\operatorname</span><span class="si">{softplus}</span><span class="s2">^{\prime}(x)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$\operatorname</span><span class="si">{softplus}</span><span class="s2">^{\prime}(x)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;input $x$&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/7ab04226810cd7012c896f8490100080c5abdcf4b0db56ff6b7c046d105d8559.png" src="_images/7ab04226810cd7012c896f8490100080c5abdcf4b0db56ff6b7c046d105d8559.png" />
+</div>
+</div>
+</section>
+<section id="softmax">
+<h2><span class="section-number">12.6.5. </span>Softmax<a class="headerlink" href="#softmax" title="Permalink to this headline">#</a></h2>
+<p>Softmaxはクラス分類やカテゴリカルデータの再構成がしたい時に利用する関数です．各成分は正の数であり，その合計は1になります．名前の通りsoftなargmax関数のような特性を持っていて（argmaxを滑らかな関数で近似している），微分可能関数です．</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}
+\begin{aligned}\\\begin{split}\operatorname{softmax}(\mathbf{x})_i 
+&amp;= \frac{\operatorname{exp}({x}_i)}{\sum_{k=1}^{c}\operatorname{exp}({x}_k)} \\
+&amp;= \frac{\operatorname{exp}({x}_i)}{\operatorname{exp}({x}_1)+\operatorname{exp}({x}_2)+ \cdots \operatorname{exp}({x}_c)} \\
+&amp;(i=1,\cdots,c)\end{split}\\\end{aligned}\end{aligned}\end{align} \]</div>
+<p>これまでの活性化関数がスカラーを受け取ってスカラーを返す関数だった（またはベクトルを受け取って全ての要素を独立に変換して返す関数だった）のに対し，Softmaxではベクトルを受け取ってベクトルを返すことを前提としています．</p>
+<blockquote>
+<div><p>softmax関数は，「シグモイド関数を個用意し，それらの出力全体を正規化することで，和が必ず1になって，確率出力ができるようにした関数」と捉えることができる．</p>
+<p><a class="reference external" href="https://cvml-expertguide.net/terms/dl/layers/activation-function/softmax/">softmax 関数 (ソフトマックス関数) [活性化関数] |CVMLエキスパートガイド</a></p>
+</div></blockquote>
+<p>これの導関数：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\partial \operatorname{softmax}(\mathbf{x})_i }{\partial x_j} 
+=\begin{cases}
+\operatorname{softmax}(\mathbf{x})_i(1-\operatorname{softmax}(\mathbf{x})_i ) &amp; i=j \\
+-\operatorname{softmax}(\mathbf{x})_i \operatorname{softmax}(\mathbf{x})_j &amp; i \ne j \\
+\end{cases}
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ナイーブな実装</span>
+<span class="n">softmax</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="c1"># 数値的に安定した実装</span>
+<span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">shifted_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">exp_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">shifted_x</span><span class="p">)</span> <span class="c1"># exp(x)でoverflowするのを防ぐ</span>
+    <span class="k">return</span> <span class="n">exp_x</span> <span class="o">/</span> <span class="n">exp_x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="c1"># 多次元配列に対応するための実装</span>
+<span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">shifted_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">exp_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">shifted_x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">exp_x</span> <span class="o">/</span> <span class="n">exp_x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">softmax_prime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">argmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tmp</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
+                   <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+                   <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">)}</span>
+                   <span class="p">)</span>
+<span class="c1">#df.plot.bar(&quot;index&quot;, [&quot;input&quot;, &quot;output&quot;])</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">&quot;### 例1&quot;</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$x^{(0)}$&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;softmax($x^{(0)}$)&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;argmax($x^{(0)}$)&quot;</span><span class="p">)</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">argmax</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;softmaxの各要素の合計：</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">&quot;### 例2&quot;</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
+                   <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+                   <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">)}</span>
+                   <span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;$x^{(1)}$&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;softmax($x^{(1)}$)&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;argmax($x^{(0)}$)&quot;</span><span class="p">)</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">argmax</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;softmaxの各要素の合計：</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<p class="rubric">例1</p>
+<img alt="_images/cd6ecbff97373e32a7c1fe43c010326510143a2a3359344a9348c871f70eb273.png" src="_images/cd6ecbff97373e32a7c1fe43c010326510143a2a3359344a9348c871f70eb273.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>softmaxの各要素の合計：0.9999999999999999
+</pre></div>
+</div>
+<p class="rubric">例2</p>
+<img alt="_images/112d8537e7fb20f2e6c04b5f80b90c9d7dcccb75a025f51e455b96c92b0ca2fa.png" src="_images/112d8537e7fb20f2e6c04b5f80b90c9d7dcccb75a025f51e455b96c92b0ca2fa.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>softmaxの各要素の合計：1.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><a class="github reference external" href="https://github.com/eliben/deep-learning-samples/blob/master/softmax/softmax.py">eliben/deep-learning-samples</a></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="matrix_ops.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">12.5. </span>行列計算で全結合層の計算が実装できる？</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="mlp_iris.myst.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">12.7. </span>[課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 目次
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#logistic-sigmoid">12.6.1. Logistic Sigmoid (ロジスティック・シグモイド)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operatorname-tanh">12.6.2. <span class="math notranslate nohighlight">\(\operatorname{tanh}\)</span>（ハイパボリックタンジェント）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relu-rectified-linear-unit">12.6.3. ReLU（Rectified Linear Unit）/ランプ関数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softplus">12.6.4. SoftPlus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">12.6.5. Softmax</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+著者 Riki Murakami
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1496 @@
+
+
+<!DOCTYPE html>
+
+
+<html >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.4. k-nnを例に学ぶ：初めての機械学習クラス実装 &#8212; 入門：ニューラルネットワーク</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'k-NN_k-Nearest Neighbors Classifier_実装_ans';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. k平均法(k-Means)" href="k-Means_%E8%AA%B2%E9%A1%8C.html" />
+    <link rel="prev" title="3.3. k-nnを例に学ぶ：初めての機械学習クラス実装" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="None"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Textbook
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. 導入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.myst.html">2. Pythonの前提知識</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E8%A7%A3%E8%AA%AC.html">3. k-NN (k-Nearest Neighbors Classifier; k近傍法)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html">3.3. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">3.4. k-nnを例に学ぶ：初めての機械学習クラス実装</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="k-Means_%E8%AA%B2%E9%A1%8C.html">4. k平均法(k-Means)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LinearRegression.html">5. 線形回帰 （Linear Regression）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegression.html">6. ロジスティック回帰 (Logistic Regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SVD_Singular%20Value%20Decomposition.html">7. SVD (Singular Value Decomposition; 特異値分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_Principal%20Component%20Analysis.html">8. PCA (Principal Component Analysis; 主成分分析)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMF_Non-Negative%20Matrix%20Factorization.html">9. NMF (Non-Negative Matrix Factorization; 非負値行列因子分解)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RF_RandomForest%E3%81%AE%E5%AE%9F%E8%A3%85.html">10. RF (Random Forest; ランダムフォレスト)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="perceptron.html">11. パーセプトロン（Perceptron）</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="perceptron.myst.html">11.8. perceptron.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlp.html">12. 多層パーセプトロン (MLP: Multi-Layer Perceptron)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="matrix_ops.html">12.5. 行列計算で全結合層の計算が実装できる？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activation_functions.html">12.6. 活性化関数（Activation Functions）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlp_iris.myst.html">12.7. [課題]MLPによるiris datasetのクラス分類プログラムのCLIアプリ化</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="word2vec.html">13. Word2Vec</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="cbow.myst.html">13.7. cbow.pyのサンプルコード</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skipgram.myst.html">13.8. [発展課題]skip_gram.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skip_gram.html">13.9. Skip-Gram</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="rnn.html">14. Recurrent Neural Network</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="lstm.html">14.4. LSTM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cnn.html">15. Convolutional Neural Network</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="ae.html">16. Auto Encoder</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="ae_mnist.myst.html">16.6. ae_mnist_animation.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ae.myst.html">16.7. [課題] ae_fmnist_animation.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bib.myst.html">17. 参考文献</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="ソースリポジトリ"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/edit/main/docs/k-NN_k-Nearest Neighbors Classifier_実装_ans.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/rsimd/textbook/issues/new?title=Issue%20on%20page%20%2Fk-NN_k-Nearest Neighbors Classifier_実装_ans.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="問題を報告"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="このページをダウンロード">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/k-NN_k-Nearest Neighbors Classifier_実装_ans.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="ソースファイルをダウンロード"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="PDFに印刷"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="全画面モード"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>k-nnを例に学ぶ：初めての機械学習クラス実装</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 目次 </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.1. 初期化の実装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.4.2. 訓練関数の実装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.4.3. 予測関数の実装</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numpy">3.4.3.1. numpyの便利な関数の紹介</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#np-argsort">3.4.3.1.1. np.argsort</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#np-bincount">3.4.3.1.2. np.bincount</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.4.3.2. 距離を計算する関数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.4.4. 与えられたデータが属するクラスを予測する関数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.4.5. リファクタリング</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.4.5.1. 変数名などを英語に直していく</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.4.5.2. 関数からクラスへ</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.4.6. 型アノテーション</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docstrings">3.4.7. Docstrings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.4.8. 演習問題</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#accuracy">3.4.8.1. ★☆☆☆☆ Accuracyメソッドの実装</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.4.8.1.1. 解答例</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.4.8.2. ★★☆☆☆ 距離関数の差し替え</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.4.8.2.1. 解答例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="k-nn">
+<h1><span class="section-number">3.4. </span>k-nnを例に学ぶ：初めての機械学習クラス実装<a class="headerlink" href="#k-nn" title="Permalink to this headline">#</a></h1>
+<p>k-NNクラスを一から実装するのは少し大変です。このノートでは、いきなりk-NNをクラスとして実装することが難しいなぁ…と思っている人のために、一歩一歩k-NNの実装を行っていきます。</p>
+<p>さて、k-NNを行うためには、</p>
+<ol class="arabic simple">
+<li><p>初期化: どんな条件のk-NNを行うのかを決める。</p></li>
+<li><p>訓練: データとラベルを保存する</p></li>
+<li><p>予測: 保存されたデータとラベルを使って未知データのクラスを予測する</p></li>
+</ol>
+<p>の3ステップが必要でした。（これは、scikit-learnの機械学習モデルクラスの実装に倣った設計になっています。）</p>
+<p>そこで、ここでは初期化、訓練、予測の3ステップに実装を分けて考えていきます。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># このノートで使うパッケージをimportしておきます。</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span> 
+
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- パッケージバージョンの確認 ---&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NumPy:&quot;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">,)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pandas:&quot;</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">plotly</span><span class="p">;</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plotly:&quot;</span><span class="p">,</span><span class="n">plotly</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">sklearn</span><span class="p">;</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Scikit-Learn:&quot;</span><span class="p">,</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- パッケージバージョンの確認 ---
+NumPy: 1.23.3
+Pandas: 1.5.0
+Plotly: 5.13.1
+Scikit-Learn: 1.1.2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># デモで使うデータセットを読み込んでおきます。</span>
+<span class="n">iris_dataset</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">()</span>
+
+<span class="c1"># 教師データとテストデータに分割します。</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">iris_dataset</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris_dataset</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="c1"># 分割したい配列をここに列挙します。今回はデータとラベルです。</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="c1"># データ全体に対するテストデータの割合を指定します。</span>
+    <span class="c1">#stratify=iris_dataset.target, # クラス毎に偏りが出ないような分割をします。</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># データを標準化しておきます。（このセルを実行しなくても構いません）</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id1">
+<h2><span class="section-number">3.4.1. </span>初期化の実装<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<p>このノートの最終目的はk-NNをクラスとして実装することです。ですがまずはクラスのことを忘れて訓練と予測をそれぞれ関数として実装します。<br />
+関数の中ではできるだけ、「関数の引数」と「関数の中で定義した変数」のみが利用可能であることを意識して下さい。（グローバル変数を関数内から参照することは極力避けてください）</p>
+<p>さて、まずはk-NNの初期化ステップです。ここでは、機械学習の訓練をする前に、どのような設定でこの機械学習モデルを構築するのかを定義します。</p>
+<p>関数として必要な機能を実装していくので、クラスは必要ないのですが、あくまでも「辞書型っぽいなにか」として利用するために、クラスを用意しておきます。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">knnに必要な情報をまとめたデータ構造</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>さて、k-NNを利用するときに、最低限確認したい情報は</p>
+<ul class="simple">
+<li><p>kを何にするのか</p></li>
+</ul>
+<p>だけです。<br />
+つまりこの下で用意する「knnに必要な情報をまとめたデータ構造」は、メンバ変数としてk（近傍の何個の点を見るのか」のみを持っていることになりそうです。
+これを上のクラスに追加します。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">knnに必要な情報をまとめたデータ構造</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+</pre></div>
+</div>
+<p>こうして作った「knnに必要な情報をまとめたデータ構造」というクラスは、今はただkの値を持つだけのデータ型です。<br />
+クラスは設計書とも言われるようなもので、この設計書をもとに実際にものを作ることで実態を得ます。この「設計書（クラス）を元に実際に作られたもの」のことをインスタンス（instance）と呼びます。</p>
+<p>では実際に、コードセルで上記のコードを実行してみます。ついでにインスタンスを生成しておきましょう。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">knnに必要な情報をまとめたデータ構造</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+
+<span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># ここではkを適当に1とします。</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_container</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_container</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;__main__.knnに必要な情報をまとめたデータ構造 object at 0x131699840&gt;
+1
+</pre></div>
+</div>
+</div>
+</div>
+<p>data_containerはkの値を持っているので、data_container.kと書くことでkの値にアクセスできます。また、<code class="docutils literal notranslate"><span class="pre">data_container.hoge</span> <span class="pre">=</span> <span class="pre">huga</span></code> とすることで、そのインスタンスに新しいフィールドと値を追加することもできます。</p>
+<p>これ以降に実装する関数では、このdata_containerを引数として渡すことにします。</p>
+</section>
+<section id="id2">
+<h2><span class="section-number">3.4.2. </span>訓練関数の実装<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<p>さて次に、データコンテナと訓練データと訓練ラベルを受け取って、訓練を行う関数を用意します。<br />
+ただし、knnが訓練ステップで行うのは、訓練というよりはデータペアをすべて保存するだけの「暗記」です。通常の関数は状態を持てないので、データコンテナとして渡されたdata_containerに新しいフィールドと値を追加することにします。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 「データコンテナ」という引数には、必ず「knnに必要な情報をまとめたデータ構造」クラスの</span>
+<span class="c1"># インスタンス（つまりdata_container）を渡して下さい。</span>
+<span class="k">def</span> <span class="nf">訓練</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">教師データ</span><span class="p">,</span> <span class="n">教師ラベル</span><span class="p">):</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span> <span class="o">=</span> <span class="n">教師データ</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師ラベル</span> <span class="o">=</span> <span class="n">教師ラベル</span>
+    <span class="k">return</span> <span class="n">データコンテナ</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<p>ここで定義した関数は、引数として受け取ったデータをデータコンテナ（第一引数）の新しいメンバ変数として追加して、更新した第一引数のオブジェクトをそのまま返すだけの仕事をします。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_container</span> <span class="o">=</span> <span class="n">訓練</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># 訓練を行ったあとのdata_containerの中身を確認してみましょう。</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_container</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_container</span><span class="o">.</span><span class="n">教師ラベル</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+[1 1 0 0 0 2 1 1 2 1 1 2 1 2 2 2 1 2 2 2 2 1 0 0 1 2 2 2 0 1 2 0 1 1 0 1 0
+ 1 2 2 0 1 0 2 2 0 2 1 1 0 1 0 2 2 2 0 1 0 2 0 0 1 1 1 0 0 2 0 1 1 1 2 1 0
+ 2 2 1 1 0 2 0 1 2 1 2 1 1 2 1 2 2 1 2 0 2 0 0 1 2 0 0 2 0 1 0]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h2><span class="section-number">3.4.3. </span>予測関数の実装<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
+<p>k-nnでは未知データと教師データすべてのとの距離を計算して、距離の近い順番にソートします。その後に教師データのラベルがそれぞれ何個有るのかを調べて、最も多いラベルを未知データのラベルとして採用するのでした。</p>
+<section id="numpy">
+<h3><span class="section-number">3.4.3.1. </span>numpyの便利な関数の紹介<a class="headerlink" href="#numpy" title="Permalink to this headline">#</a></h3>
+<p>実装を見る前に、コード中で出てくる難しそうな関数を紹介しておきます。</p>
+<section id="np-argsort">
+<h4><span class="section-number">3.4.3.1.1. </span>np.argsort<a class="headerlink" href="#np-argsort" title="Permalink to this headline">#</a></h4>
+<p>背の順にデータをソートした後に、ソートした要素が入った配列を返すのがnp.sortです。これに対して、ソートした後にそれぞれの要素の元の配列での順番が入った配列を返すのがnp.argsortです。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># np.argsortとは</span>
+<span class="n">身長</span> <span class="o">=</span> <span class="p">[</span><span class="mi">180</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">140</span><span class="p">,</span><span class="mi">160</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;np.sort:&quot;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">身長</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;np.argsort:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">身長</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.sort: [140 150 160 180]
+np.argsort: [2 1 3 0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>上の説明でわからなかったという人は、下のコードを読んでイメージを掴んで下さい。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">argsort</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;argsort</span>
+<span class="sd">    実際にこのように実装されているわけではありませんが、上の説明でわからなかった場合はこのコードを読んでみてください。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 背の順に並び替え</span>
+    <span class="nb">sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    
+    <span class="c1"># 元の配列arrでのindex（前から何番目の要素か）を取得</span>
+    <span class="n">argsorted_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">argsorted_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    
+    <span class="n">argsorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">argsorted_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">argsorted</span>
+</pre></div>
+</div>
+<p>np.argsortは自分で実装するとちょっと面倒くさい処理なので、NumPyの関数を使うことをお勧めします。</p>
+</section>
+<section id="np-bincount">
+<h4><span class="section-number">3.4.3.1.2. </span>np.bincount<a class="headerlink" href="#np-bincount" title="Permalink to this headline">#</a></h4>
+<p>配列内にある数字がそれぞれ何個あったのかを数えてくれる関数（最大値と同じ要素数のベクトルが返ってくる）</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">成績</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">成績</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0, 1, 1, 3, 1, 1])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h3><span class="section-number">3.4.3.2. </span>距離を計算する関数<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h3>
+<p>ではまず、距離を計算する関数を実装しましょう。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">距離関数</span><span class="p">(</span><span class="n">データ点</span><span class="p">,</span> <span class="n">教師データ全部</span><span class="p">):</span>
+    <span class="n">距離</span> <span class="o">=</span> <span class="p">((</span><span class="n">データ点</span> <span class="o">-</span> <span class="n">教師データ全部</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">距離</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2><span class="section-number">3.4.4. </span>与えられたデータが属するクラスを予測する関数<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h2>
+<p>距離関数を使って、与えられたデータがどのクラスに属するのかを予測する関数を作ります。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">予測</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+    <span class="n">予測したクラスラベル</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># リストとして初期化</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="n">ループの回数</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+        
+        <span class="c1"># データ点xと教師データすべてとの距離を計算し、distance_vectorに格納する。</span>
+        <span class="c1"># distance_vectorの要素数は教師データの数と同じになっているはず。</span>
+        <span class="n">distance_vector</span> <span class="o">=</span> <span class="n">距離関数</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span><span class="p">)</span>
+        
+        <span class="c1"># これを小さい順にソートして、データの番号を変数に保存しておく</span>
+        <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+        
+        <span class="c1"># 先頭からk個だけ取り出して、あとは捨てる</span>
+        <span class="n">ご近所さん</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="n">データコンテナ</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+        
+        <span class="c1"># k個のご近所さんの教師ラベルを変数に保存しておく</span>
+        <span class="n">ご近所さんのラベル</span> <span class="o">=</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師ラベル</span><span class="p">[</span><span class="n">ご近所さん</span><span class="p">]</span>
+        
+        <span class="c1"># ご近所さんの中で一番多いラベルを見つける</span>
+        <span class="n">近所で一番人気のラベル</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">ご近所さんのラベル</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+        
+        <span class="c1"># xのご近所で一番多いのがこのクラスなら、きっとxもこのクラスなんだろうな…</span>
+        <span class="n">予測したクラスラベル</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">近所で一番人気のラベル</span><span class="p">)</span>
+        
+        <span class="c1"># あとはこれを「クラスを予測したいデータ」すべてに対して行えばすべての予測ができる。</span>
+        
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">予測したクラスラベル</span><span class="p">)</span> <span class="c1"># 返す時はnumpyの配列としておく（おそらくy_trainもそうだったでしょ？）</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">予測</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+    <span class="c1"># 正答率</span>
+    <span class="n">正答率</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">正答率</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9333333333333333
+</pre></div>
+</div>
+</div>
+</div>
+<p>これでk-NNが完成です。</p>
+</section>
+<section id="id6">
+<h2><span class="section-number">3.4.5. </span>リファクタリング<a class="headerlink" href="#id6" title="Permalink to this headline">#</a></h2>
+<p>例えば以下のように実行した場合、上で作ったプログラムはエラーを起こします。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># ここではkを適当に1とします。</span>
+<span class="c1"># data_container = 訓練(data_container, X_train, y_train)</span>
+<span class="n">pred_labels</span> <span class="o">=</span> <span class="n">予測</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># ここではkを適当に1とします。</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="c1"># data_container = 訓練(data_container, X_train, y_train)</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">予測</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+<span class="nn">Cell In[11], line 8,</span> in <span class="ni">予測</span><span class="nt">(データコンテナ, クラスを予測したいデータ)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">予測したクラスラベル</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># リストとして初期化</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="k">for</span> <span class="p">(</span><span class="n">ループの回数</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="c1"># データ点xと教師データすべてとの距離を計算し、distance_vectorに格納する。</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>     <span class="c1"># distance_vectorの要素数は教師データの数と同じになっているはず。</span>
+<span class="ne">----&gt; </span><span class="mi">8</span>     <span class="n">distance_vector</span> <span class="o">=</span> <span class="n">距離関数</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="c1"># これを小さい順にソートして、データの番号を変数に保存しておく</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>     <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+
+<span class="ne">AttributeError</span>: &#39;knnに必要な情報をまとめたデータ構�&#39; object has no attribute &#39;教師データ&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>訓練をしていないのに予測を走らせるとエラーが出るようです。そのために訓練済みかどうかを判別できるフラグもデータコンテナのフィールドとして与えておけば良さそうです。<br />
+ここまでで実装したコード⇓</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## ここまでで実装したコード:</span>
+<span class="k">class</span> <span class="nc">knnに必要な情報をまとめたデータ構造</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        
+<span class="k">def</span> <span class="nf">訓練</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">教師データ</span><span class="p">,</span> <span class="n">教師ラベル</span><span class="p">):</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span> <span class="o">=</span> <span class="n">教師データ</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師ラベル</span> <span class="o">=</span> <span class="n">教師ラベル</span>
+    <span class="k">return</span> <span class="n">データコンテナ</span> 
+
+<span class="k">def</span> <span class="nf">距離を計算する関数</span><span class="p">(</span><span class="n">データ点</span><span class="p">,</span> <span class="n">教師データ全部</span><span class="p">):</span>
+    <span class="n">距離</span> <span class="o">=</span> <span class="p">((</span><span class="n">データ点</span> <span class="o">-</span> <span class="n">教師データ全部</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">距離</span>
+
+<span class="k">def</span> <span class="nf">予測</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+    <span class="n">予測したクラスラベル</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="n">ループの回数</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+        <span class="n">distance_vector</span> <span class="o">=</span> <span class="n">距離を計算する関数</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span><span class="p">)</span>
+        <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+        <span class="n">ご近所さん</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="n">データコンテナ</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">ご近所さんのラベル</span> <span class="o">=</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師ラベル</span><span class="p">[</span><span class="n">ご近所さん</span><span class="p">]</span>
+        <span class="n">近所で一番人気のラベル</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">ご近所さんのラベル</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+        <span class="n">予測したクラスラベル</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">近所で一番人気のラベル</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">予測したクラスラベル</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>訓練済みフラグを追加して、予測関数で訓練済みかを確認するように変更したコード⇓</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 訓練済みフラグを追加して、予測関数で訓練済みかを確認するように変更したコード:</span>
+<span class="k">class</span> <span class="nc">knnに必要な情報をまとめたデータ構造</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span> 
+        
+<span class="k">def</span> <span class="nf">訓練</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">教師データ</span><span class="p">,</span> <span class="n">教師ラベル</span><span class="p">):</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span> <span class="o">=</span> <span class="n">教師データ</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師ラベル</span> <span class="o">=</span> <span class="n">教師ラベル</span>
+    <span class="n">データコンテナ</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">データコンテナ</span> 
+
+<span class="k">def</span> <span class="nf">距離を計算する関数</span><span class="p">(</span><span class="n">データ点</span><span class="p">,</span> <span class="n">教師データ全部</span><span class="p">):</span>
+    <span class="n">距離</span> <span class="o">=</span> <span class="p">((</span><span class="n">データ点</span> <span class="o">-</span> <span class="n">教師データ全部</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">距離</span>
+
+<span class="k">def</span> <span class="nf">予測</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+    <span class="n">予測したクラスラベル</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="n">ループの回数</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+        <span class="n">distance_vector</span> <span class="o">=</span> <span class="n">距離を計算する関数</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師データ</span><span class="p">)</span>
+        <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+        <span class="n">ご近所さん</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="n">データコンテナ</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">ご近所さんのラベル</span> <span class="o">=</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">教師ラベル</span><span class="p">[</span><span class="n">ご近所さん</span><span class="p">]</span>
+        <span class="n">近所で一番人気のラベル</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">ご近所さんのラベル</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+        <span class="n">予測したクラスラベル</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">近所で一番人気のラベル</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">予測したクラスラベル</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 訓練しないで予測しようとした場合</span>
+
+<span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">pred_labels</span> <span class="o">=</span> <span class="n">予測</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AssertionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># 訓練しないで予測しようとした場合</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">予測</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+<span class="nn">Cell In [13], line 18,</span> in <span class="ni">予測</span><span class="nt">(データコンテナ, クラスを予測したいデータ)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="k">def</span> <span class="nf">予測</span><span class="p">(</span><span class="n">データコンテナ</span><span class="p">,</span> <span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+<span class="ne">---&gt; </span><span class="mi">18</span>     <span class="k">assert</span> <span class="n">データコンテナ</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span>     <span class="n">予測したクラスラベル</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="g g-Whitespace">     </span><span class="mi">21</span>     <span class="k">for</span> <span class="p">(</span><span class="n">ループの回数</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">クラスを予測したいデータ</span><span class="p">):</span>
+
+<span class="ne">AssertionError</span>: 先に訓練してから予測して下さい
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 訓練後に予測をしようとした場合</span>
+
+<span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">data_container</span> <span class="o">=</span> <span class="n">訓練</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">pred_labels</span> <span class="o">=</span> <span class="n">予測</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span> <span class="c1"># 正答率</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9555555555555556
+</pre></div>
+</div>
+</div>
+</div>
+<p>これ以外にも、「教師データとテストデータの特徴数が異なっている」のようなパッと想像ができるエラーについては、わかりやすいエラーメッセージと一緒にエラーを起こすことは大切です。assertを使う以外にもエラーの起こし方はあるので、調べてみてください。</p>
+<p>また、このように安全なコードを書くためには、アルゴリズムの本質とは関係のないコードを書く必要がたくさん出てきます。本質的ではないコードを書きたくない場合は、有名なOSSのリポジトリを除いてみてください。sklearn.base.BaseEstimatorのような「機械学習モデルの実装に便利な親クラス」が公開されていることがあります。</p>
+<section id="id7">
+<h3><span class="section-number">3.4.5.1. </span>変数名などを英語に直していく<a class="headerlink" href="#id7" title="Permalink to this headline">#</a></h3>
+<p>さて、このコードでも十分動くのですが、変数名や関数名は英語で書くのが普通です。とりあえず、いくつか英語に直してみます。
+また、この際に「必要情報」としていた部分を、全てselfに置き換えておきます。</p>
+<p>… 教師データとそのラベルをX_train, y_train.　(training dataなのでtrain)。テストデータとそのラベルをX_test, y_testとするのでした。これについてもここで直しておきます。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">knnに必要な情報をまとめたデータ構造</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span> 
+        
+<span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">X_train</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y_train</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="bp">self</span> 
+
+<span class="k">def</span> <span class="nf">compute_distance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">distance</span>
+
+<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+    <span class="n">pred_labels</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="n">loop_counter</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_test</span><span class="p">):</span>
+        <span class="n">distance_vector</span> <span class="o">=</span> <span class="n">compute_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span><span class="p">)</span>
+        <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">neighbors_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
+        <span class="n">popular_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">neighbors_label</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+        <span class="n">pred_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popular_label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">data_container</span> <span class="o">=</span> <span class="n">knnに必要な情報をまとめたデータ構造</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">data_container</span> <span class="o">=</span> <span class="n">fit</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">data_container</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># 正答率</span>
+    <span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>よく見るプログラムらしくなってきましたね。</p>
+</section>
+<section id="id8">
+<h3><span class="section-number">3.4.5.2. </span>関数からクラスへ<a class="headerlink" href="#id8" title="Permalink to this headline">#</a></h3>
+<p>さて、ここで、fit, predictは「 knnに必要な情報をまとめたデータ構造」のインスタンスを第一引数に取る関数でした。それ以外のデータ構造を渡しても、おそらくエラーが出てしまいそうです。<br />
+このような「あるデータ構造専用の関数」のことをメソッドと呼び、classの中で定義する事ができます。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">KNearestNeighborsClassifier</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span> 
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">X_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span> 
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+        <span class="n">pred_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">loop_counter</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_test</span><span class="p">):</span>
+            <span class="n">distance_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span><span class="p">)</span>
+            <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">neighbors_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
+            <span class="n">popular_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">neighbors_label</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">pred_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popular_label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">compute_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># 正答率</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9555555555555556
+</pre></div>
+</div>
+</div>
+</div>
+<p>この書き方をすることで、インスタンス.メソッド(self以外の引数)の形でメソッドの実行が可能です。また、それぞれのメソッドは、別のメソッドからself.メソッド名で呼び出すことができます。fitメソッドからpredictを呼び出す時は self.predict とすればいいのです。selfはインスタンス自体を示しているので、これはインスタンス.メソッドの形になっています。</p>
+<p>逆に、通常のメソッドの中で、クラス名.メソッドとするとエラーになります。（ただクラス名を書くだけだとインスタンスになっていませんよね。）</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">pred_labels</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># 正答率</span>
+<span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9555555555555556
+</pre></div>
+</div>
+</div>
+</div>
+<p>これで基本的なクラスの実装は完了しました。</p>
+</section>
+</section>
+<section id="id9">
+<h2><span class="section-number">3.4.6. </span>型アノテーション<a class="headerlink" href="#id9" title="Permalink to this headline">#</a></h2>
+<p>Pythonは動的型付け言語といって、プログラムを書くときに明示的に値の型を書かなくても実行時に型を判別してくれる言語です。そのおかげでC言語のようにint charのような型を指定せずにプログラムを書くことができています。</p>
+<p>しかしながら、ある程度長いプログラムを書くときや複数人で開発をするときには、型が明示されていた方がわかりやすいと感じる人が多いようです。そこでPythonにも変数の型を指定する型アノテーションが導入されました。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 最初に宣言だけして後から代入</span>
+<span class="n">a</span><span class="p">:</span> <span class="nb">int</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># 型の宣言と代入を同時に行う</span>
+<span class="n">b</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>これをtype hintと呼ぶこともあります。これが特に用いられるのは関数を定義する際です。</p>
+<p>先ほどの例にあったcompute_distanceメソッドでは、aとbが何型なのか、どんな型の値が返ってくるのかがわかりませんでした。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">compute_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span>
+</pre></div>
+</div>
+<p>これにtype hintをつけることで、以下のようになります。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">compute_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span><span class="o">-&gt;</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span>
+</pre></div>
+</div>
+<p>これで最低限、aとbがNumPyの配列で、返り値として同じ型のオブジェクトを返すことがわかるようになりました。</p>
+<p>本来、このtype hintは期待していない値が入力されてもエラーなどは出してくれません。しかし、mypyを使ったデバッグやIDEの補完機能などでは利用されます。綺麗なコードを書きたい場合は極力type hintをつけることを忘れないようにするべきでしょう。</p>
+</section>
+<section id="docstrings">
+<h2><span class="section-number">3.4.7. </span>Docstrings<a class="headerlink" href="#docstrings" title="Permalink to this headline">#</a></h2>
+<p>ここでは詳しく説明をしませんが、Pythonにはクラスや関数の説明文を書くためのdocstirngという機能があります。関数の場合では、関数名の定義をした次の行に文字列を書いておけば、これがdocstringとして扱われます。多くの場合は改行が必要になるので、「”””」で囲んで関数の説明を書くことになります。docstringの書き方にはNumPyスタイルやGoogleスタイルなどの有名な書式があります。外部公開しないコードであれば、とりあえず関数の説明を書いておくだけでOKです。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;aとbの和を求める</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a (float): 足す数</span>
+<span class="sd">        b (float, optional): 足される数. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: aとbの和</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>docstringをしっかりと書いておくことには明確な利点があります。</p>
+<p>これを<a class="reference external" href="https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html">自動で収集してAPIリファレンスを作ってくれるツール</a>や、<a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=ms-python.python">マウスオーバーでdocstringを表示してくれるIDEやテキストエディタの機能</a>などで役立ちます。</p>
+</section>
+<section id="id10">
+<h2><span class="section-number">3.4.8. </span>演習問題<a class="headerlink" href="#id10" title="Permalink to this headline">#</a></h2>
+<section id="accuracy">
+<h3><span class="section-number">3.4.8.1. </span>★☆☆☆☆ Accuracyメソッドの実装<a class="headerlink" href="#accuracy" title="Permalink to this headline">#</a></h3>
+<p>実装したKNearestNeighborsClassifierクラスに、新しいメソッドaccuracyを追加してください。このメソッドは予測したラベルの配列と正しいラベルの配列の二つを引数に取り、返り値として正答率を返します。</p>
+<section id="id11">
+<h4><span class="section-number">3.4.8.1.1. </span>解答例<a class="headerlink" href="#id11" title="Permalink to this headline">#</a></h4>
+<p>通常のメソッドで実装する場合:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">KNearestNeighborsClassifier</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span> 
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">X_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span> 
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+        <span class="n">pred_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">loop_counter</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_test</span><span class="p">):</span>
+            <span class="n">distance_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span><span class="p">)</span>
+            <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">neighbors_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
+            <span class="n">popular_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">neighbors_label</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">pred_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popular_label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">compute_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span>
+
+    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred_labels</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">true_labels</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span><span class="o">-&gt;</span><span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正答率</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pred_labels (np.ndarray[np.float64]): 予測したラベルを持った配列</span>
+<span class="sd">            true_labels (np.ndarray[np.float64]): 正しいラベルを持った配列</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: 正答率</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># 正答率</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9555555555555556
+</pre></div>
+</div>
+</div>
+</div>
+<p>staticmethodで実装する場合:</p>
+<p>accuracyはselfに紐づくデータを参照せずに求められるので、ここでは&#64;staticmethodというデコレータを用いています。これを使うとメソッドの第一引数のselfが不要になります。もちろん通常のselfを使ったメソッドでもOKですが、staticmethodデコレータがついているメソッドは「インスタンスの状態に依存したメソッドなのかが一目瞭然になる」という利点があります。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">KNearestNeighborsClassifier</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span> 
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">X_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span> 
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+        <span class="n">pred_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">loop_counter</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_test</span><span class="p">):</span>
+            <span class="n">distance_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span><span class="p">)</span>
+            <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">neighbors_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
+            <span class="n">popular_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">neighbors_label</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">pred_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popular_label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">compute_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">true_labels</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span><span class="o">-&gt;</span><span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正答率</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pred_labels (np.ndarray[np.float64]): 予測したラベルを持った配列</span>
+<span class="sd">            true_labels (np.ndarray[np.float64]): 正しいラベルを持った配列</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: 正答率</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">pred_labels</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="c1"># 正答率</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9555555555555556
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="id12">
+<h3><span class="section-number">3.4.8.2. </span>★★☆☆☆ 距離関数の差し替え<a class="headerlink" href="#id12" title="Permalink to this headline">#</a></h3>
+<p>実装したKNearestNeighborsClassifierクラスのcompute_distanceメソッドでは、ユークリッド距離の代わりとして二乗和を使っています。NearestNeighborsClassifierクラスを修正し、クラスの初期化の際に距離関数を切り替えられるようにしてください。また、以下の例のように実行できる必要があります。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 二乗和を使う場合</span>
+<span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># l1（マンハッタン）距離を使う場合</span>
+<span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;l1&quot;</span><span class="p">)</span>
+
+<span class="c1"># l2（ユークリッド）距離を使う場合</span>
+<span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;l2&quot;</span><span class="p">)</span>
+
+<span class="c1"># cos距離を使う場合</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cosine</span>
+<span class="n">cosine_distance</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">cosine</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">B</span><span class="p">])</span>
+
+<span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="n">cosine_distance</span><span class="p">)</span>
+
+<span class="c1"># 定義されていない関数名が与えられた場合</span>
+<span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;存在しない関数名&quot;</span><span class="p">)</span>
+<span class="c1"># この場合はNotImplementedErrorをraiseしてください。</span>
+</pre></div>
+</div>
+<section id="id13">
+<h4><span class="section-number">3.4.8.2.1. </span>解答例<a class="headerlink" href="#id13" title="Permalink to this headline">#</a></h4>
+<p>不要になったcompute_distanceを削除し、__init__の引数としてdistance_functionを追加します。文字列を受け取った場合はあらかじめ定義しておいた関数をcompute_distanceに代入し、関数自体が与えられた場合はそれを代入します。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="k">class</span> <span class="nc">KNearestNeighborsClassifier</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">:</span><span class="nb">str</span><span class="o">|</span><span class="n">Callable</span><span class="o">=</span><span class="s2">&quot;sum_of_squares&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span> <span class="o">=</span> <span class="n">distance_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_distance_function</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">X_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span> 
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;先に訓練してから予測して下さい&quot;</span>
+        <span class="n">pred_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">loop_counter</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_test</span><span class="p">):</span>
+            <span class="n">distance_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span><span class="p">)</span>
+            <span class="n">sorted_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance_vector</span><span class="p">)</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="n">sorted_indexes</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">neighbors_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
+            <span class="n">popular_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">neighbors_label</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">pred_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">popular_label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__set_distance_function</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;self.disntance_functionを参考に距離関数を返します。</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: 存在しない関数名が与えられた場合はErrorを出します。</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable: 距離関数</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span> <span class="o">==</span> <span class="s2">&quot;sum_of_squares&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span> <span class="o">==</span> <span class="s2">&quot;l1&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span> <span class="o">==</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">pred_labels</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span> <span class="n">true_labels</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span><span class="o">-&gt;</span><span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正答率</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pred_labels (np.ndarray[np.float64]): 予測したラベルを持った配列</span>
+<span class="sd">            true_labels (np.ndarray[np.float64]): 正しいラベルを持った配列</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: 正答率</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">pred_labels</span> <span class="o">==</span> <span class="n">y_test</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    
+    <span class="c1"># 二乗和を使う場合</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;二乗和:&quot;</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span>
+
+    <span class="c1"># l1（マンハッタン）距離を使う場合</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;l1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;l1:&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+    <span class="c1"># l2（ユークリッド）距離を使う場合</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;l2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;l2:&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+
+    <span class="c1"># cos距離を使う場合</span>
+    <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cosine</span>
+    <span class="n">cosine_distance</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">cosine</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">B</span><span class="p">])</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="n">cosine_distance</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cos:&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+
+    <span class="c1"># 定義されていない関数名が与えられた場合</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;存在しない関数名&quot;</span><span class="p">)</span>
+    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>二乗和: 0.9555555555555556
+l1: 0.9111111111111111
+l2: 0.9555555555555556
+cos: 0.8666666666666667
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NotImplementedError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">],</span> <span class="n">line</span> <span class="mi">78</span>
+<span class="g g-Whitespace">     </span><span class="mi">75</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cos:&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">77</span> <span class="c1"># 定義されていない関数名が与えられた場合</span>
+<span class="ne">---&gt; </span><span class="mi">78</span> <span class="n">model</span> <span class="o">=</span> <span class="n">KNearestNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">distance_function</span><span class="o">=</span><span class="s2">&quot;存在しない関数名&quot;</span><span class="p">)</span>
+
+<span class="nn">Cell In [40], line 8,</span> in <span class="ni">KNearestNeighborsClassifier.__init__</span><span class="nt">(self, k, distance_function)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span> <span class="o">=</span> <span class="n">distance_function</span>
+<span class="ne">----&gt; </span><span class="mi">8</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_distance_function</span><span class="p">()</span>
+
+<span class="nn">Cell In [40], line 37,</span> in <span class="ni">KNearestNeighborsClassifier.__set_distance_function</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span>     <span class="k">return</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<span class="ne">---&gt; </span><span class="mi">37</span>     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<span class="g g-Whitespace">     </span><span class="mi">38</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_function</span>
+
+<span class="ne">NotImplementedError</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="k-NN_k-Nearest%20Neighbors%20Classifier_%E5%AE%9F%E8%A3%85.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">3.3. </span>k-nnを例に学ぶ：初めての機械学習クラス実装</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="k-Means_%E8%AA%B2%E9%A1%8C.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">4. </span>k平均法(k-Means)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 目次
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.1. 初期化の実装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.4.2. 訓練関数の実装</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.4.3. 予測関数の実装</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numpy">3.4.3.1. numpyの便利な関数の紹介</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#np-argsort">3.4.3.1.1. np.argsort</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#np-bincount">3.4.3.1.2. np.bincount</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.4.3.2. 距離を計算する関数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.4.4. 与えられたデータが属するクラスを予測する関数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.4.5. リファクタリング</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.4.5.1. 変数名などを英語に直していく</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.4.5.2. 関数からクラスへ</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.4.6. 型アノテーション</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docstrings">3.4.7. Docstrings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.4.8. 演習問題</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#accuracy">3.4.8.1. ★☆☆☆☆ Accuracyメソッドの実装</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.4.8.1.1. 解答例</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.4.8.2. ★★☆☆☆ 距離関数の差し替え</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.4.8.2.1. 解答例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+著者 Riki Murakami
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
