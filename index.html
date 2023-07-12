@@ -387,7 +387,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -403,6 +405,15 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> 目次 </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">目次</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">備考</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -414,6 +425,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="textbook">
 <h1>Textbook<a class="headerlink" href="#textbook" title="Permalink to this headline">#</a></h1>
+<section id="id1">
+<h2>目次<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">1. 導入</a></li>
@@ -435,6 +448,19 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="bib.myst.html">17. 参考文献</a></li>
 </ul>
 </div>
+</section>
+<section id="id2">
+<h2>備考<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h2>
+<p>前半（ランダムフォレストまで）は去年度使った資料をそのまま上げているので要修正．<br />
+ある程度書き終わったセクション：</p>
+<ul class="simple">
+<li><p>Pythonの前提知識</p></li>
+<li><p>パーセプトロン（Perceptron）</p></li>
+<li><p>Word2Vec</p></li>
+<li><p>Convolutional Neural Network</p></li>
+<li><p>Auto Encoder</p></li>
+</ul>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -486,6 +512,21 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 目次
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">目次</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">備考</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

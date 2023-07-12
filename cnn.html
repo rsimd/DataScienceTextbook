@@ -821,7 +821,7 @@ label: &lt;class &#39;torch.Tensor&#39;&gt; torch.Size([1]) torch.int64
 	 tensor([5])
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x13d2ce920&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x146345d20&gt;
 </pre></div>
 </div>
 <img alt="_images/4966ebd558c943e890e1cb7939ffd43cf02f97f7d5845ab740a4e702463e9c5e.png" src="_images/4966ebd558c943e890e1cb7939ffd43cf02f97f7d5845ab740a4e702463e9c5e.png" />
@@ -1059,7 +1059,24 @@ Sequential(
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  epoch    train_loss    valid_acc    valid_loss      dur
 -------  ------------  -----------  ------------  -------
-      1        <span class=" -Color -Color-Cyan">0.9455</span>       <span class=" -Color -Color-Green">0.8973</span>        <span class=" -Color -Color-Magenta">0.3246</span>  15.5702
+      1        <span class=" -Color -Color-Cyan">0.9455</span>       <span class=" -Color -Color-Green">0.8973</span>        <span class=" -Color -Color-Magenta">0.3246</span>  15.5615
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;skorch.classifier.NeuralNetClassifier&#39;&gt;[initialized](
+  module_=Sequential(
+    (0): Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1))
+    (4): ReLU()
+    (5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (6): Dropout2d(p=0.25, inplace=False)
+    (7): Flatten(start_dim=1, end_dim=-1)
+    (8): Linear(in_features=1600, out_features=128, bias=True)
+    (9): ReLU()
+    (10): Linear(in_features=128, out_features=10, bias=True)
+  ),
+)
 </pre></div>
 </div>
 </div>
