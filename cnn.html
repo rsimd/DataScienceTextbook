@@ -461,7 +461,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="convolutional-neural-network">
 <h1><span class="section-number">15. </span>Convolutional Neural Network<a class="headerlink" href="#convolutional-neural-network" title="Permalink to this headline">#</a></h1>
-<p>CNN, 畳み込みニューラルネットワーク <span id="id1">[<a class="reference internal" href="#id48" title="岡谷 貴之. 画像認識のための深層学習の研究動向 : 畳込みニューラルネットワークとその利用法の発展(ニューラルネットワーク研究のフロンティア). 人工知能, 31(2):169–179, 2016. doi:10.11517/jjsai.31.2\_169.">貴之, 2016</a>]</span></p>
+<p>CNN, 畳み込みニューラルネットワーク <span id="id1">[<a class="reference internal" href="#id49" title="岡谷 貴之. 画像認識のための深層学習の研究動向 : 畳込みニューラルネットワークとその利用法の発展(ニューラルネットワーク研究のフロンティア). 人工知能, 31(2):169–179, 2016. doi:10.11517/jjsai.31.2\_169.">貴之, 2016</a>]</span></p>
 <p><img alt="" src="https://cdn-ak.f.st-hatena.com/images/fotolife/n/nkdkccmbr/20161006/20161006220128.png" /><br />
 CNNのイメージ 出典：<a class="reference external" href="https://nkdkccmbr.hateblo.jp/entry/2016/10/06/222245">畳み込みニューラルネットワーク(CNN) – ニューラルネットワーク・DeepLearningなどの画像素材　プレゼン・ゼミなどに【WTFPL】</a></p>
 <div class="cell tag_hide-input docutils container">
@@ -515,12 +515,12 @@ CNNのイメージ 出典：<a class="reference external" href="https://nkdkccmb
 <li><p>画像の濃淡パターンを検出する機能</p></li>
 <li><p>物体の位置ズレを許容して同一物体だとみなす機能</p></li>
 </ol>
-<p>を再現したモデルがCNNです．これを組み込んだ最初期のモデルはネオコグニトロン（Negcognitron）と呼ばれ，福島邦彦氏によって発表されました<span id="id3">[<a class="reference internal" href="#id46" title="K Fukushima. Neocognitron: a self organizing neural network model for a mechanism of pattern recognition unaffected by shift in position. Biol. Cybern., 36(4):193–202, 1980. doi:10.1007/BF00344251.">Fukushima, 1980</a>]</span>．訓練は自己組織化によって行われます．</p>
+<p>を再現したモデルがCNNです．これを組み込んだ最初期のモデルはネオコグニトロン（Negcognitron）と呼ばれ，福島邦彦氏によって発表されました<span id="id3">[<a class="reference internal" href="#id47" title="K Fukushima. Neocognitron: a self organizing neural network model for a mechanism of pattern recognition unaffected by shift in position. Biol. Cybern., 36(4):193–202, 1980. doi:10.1007/BF00344251.">Fukushima, 1980</a>]</span>．訓練は自己組織化によって行われます．</p>
 <blockquote>
 <div><p><img alt="" src="_images/neocognitron2.png" /><br />
 出典：<a class="reference external" href="http://www.visionsociety.jp/vision/vol29-1/29-1_1.pdf">視覚パターン認識とネオコグニトロン |福島邦彦</a></p>
 </div></blockquote>
-<p>現在主流のCNNはネオコグニトロンをベースに，訓練方法を誤差逆伝播法に変えられています．そしてその後にCNNは更に深層化し，様々な画像認識タスクで当時のSoTA（State-of-the-Art, 現時点での最先端レベルの性能）を叩き出しました．特に有名なのが2012年のILSVRC（ImageNet Large Scale Visual Recognition Challenge）という画像認識コンペティションでしょう．ここで<a class="reference external" href="https://scholar.google.is/citations?user=JicYPdAAAAAJ">Geoffrey Everest Hinton</a>らのチームがAlexNetというCNNで，これまでの誤差率を10%以上を改善し，大成功を収めたのが有名です．<span id="id4">[<a class="reference internal" href="#id47" title="Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. Adv. Neural Inf. Process. Syst., 2012.">Krizhevsky, Sutskever, and Hinton, 2012</a>]</span></p>
+<p>現在主流のCNNはネオコグニトロンをベースに，訓練方法を誤差逆伝播法に変えられています．そしてその後にCNNは更に深層化し，様々な画像認識タスクで当時のSoTA（State-of-the-Art, 現時点での最先端レベルの性能）を叩き出しました．特に有名なのが2012年のILSVRC（ImageNet Large Scale Visual Recognition Challenge）という画像認識コンペティションでしょう．ここで<a class="reference external" href="https://scholar.google.is/citations?user=JicYPdAAAAAJ">Geoffrey Everest Hinton</a>らのチームがAlexNetというCNNで，これまでの誤差率を10%以上を改善し，大成功を収めたのが有名です．<span id="id4">[<a class="reference internal" href="#id48" title="Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. Adv. Neural Inf. Process. Syst., 2012.">Krizhevsky, Sutskever, and Hinton, 2012</a>]</span></p>
 </section>
 <section id="id5">
 <h3><span class="section-number">15.1.2. </span>初期のCNNの有名なモデル<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h3>
@@ -529,25 +529,25 @@ CNNのイメージ 出典：<a class="reference external" href="https://nkdkccmb
 <p>基本的なCNNアーキテクチャのモデルです．</p>
 <p>関係する論文：</p>
 <ul class="simple">
-<li><p><span id="id6">[<a class="reference internal" href="#id45" title="Y LeCun, B Boser, J S Denker, D Henderson, R E Howard, W Hubbard, and L D Jackel. Backpropagation applied to handwritten zip code recognition. Neural Comput., 1(4):541–551, December 1989. doi:10.1162/neco.1989.1.4.541.">LeCun, Boser, Denker, Henderson, Howard, Hubbard, and Jackel, 1989</a>]</span></p></li>
-<li><p><span id="id7">[<a class="reference internal" href="#id43" title="Y Le Cun, B Boser, J S Denker, R E Howard, W Habbard, L D Jackel, and D Henderson. Handwritten digit recognition with a back-propagation network. In Advances in neural information processing systems 2, pages 396–404. Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, June 1990.">Cun, Boser, Denker, Howard, Habbard, Jackel, and Henderson, 1990</a>]</span></p></li>
-<li><p><span id="id8">[<a class="reference internal" href="#id44" title="Y Lecun, L Bottou, Y Bengio, and P Haffner. Gradient-based learning applied to document recognition. Proc. IEEE, 86(11):2278–2324, November 1998. doi:10.1109/5.726791.">Lecun, Bottou, Bengio, and Haffner, 1998</a>]</span></p></li>
+<li><p><span id="id6">[<a class="reference internal" href="#id46" title="Y LeCun, B Boser, J S Denker, D Henderson, R E Howard, W Hubbard, and L D Jackel. Backpropagation applied to handwritten zip code recognition. Neural Comput., 1(4):541–551, December 1989. doi:10.1162/neco.1989.1.4.541.">LeCun, Boser, Denker, Henderson, Howard, Hubbard, and Jackel, 1989</a>]</span></p></li>
+<li><p><span id="id7">[<a class="reference internal" href="#id44" title="Y Le Cun, B Boser, J S Denker, R E Howard, W Habbard, L D Jackel, and D Henderson. Handwritten digit recognition with a back-propagation network. In Advances in neural information processing systems 2, pages 396–404. Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, June 1990.">Cun, Boser, Denker, Howard, Habbard, Jackel, and Henderson, 1990</a>]</span></p></li>
+<li><p><span id="id8">[<a class="reference internal" href="#id45" title="Y Lecun, L Bottou, Y Bengio, and P Haffner. Gradient-based learning applied to document recognition. Proc. IEEE, 86(11):2278–2324, November 1998. doi:10.1109/5.726791.">Lecun, Bottou, Bengio, and Haffner, 1998</a>]</span></p></li>
 </ul>
 </section>
 <section id="alexnet">
 <h4><span class="section-number">15.1.2.2. </span>AlexNet<a class="headerlink" href="#alexnet" title="Permalink to this headline">#</a></h4>
-<p>前述した通り，2012年のILSVRC（ImageNet Large Scale Visual Recognition Challenge）で優勝したモデル<span id="id9">[<a class="reference internal" href="#id47" title="Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. Adv. Neural Inf. Process. Syst., 2012.">Krizhevsky, Sutskever, and Hinton, 2012</a>]</span>．<br />
+<p>前述した通り，2012年のILSVRC（ImageNet Large Scale Visual Recognition Challenge）で優勝したモデル<span id="id9">[<a class="reference internal" href="#id48" title="Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. Adv. Neural Inf. Process. Syst., 2012.">Krizhevsky, Sutskever, and Hinton, 2012</a>]</span>．<br />
 これまでの誤差率を10%以上を改善し，Deep Learningブームを引き起こしました．</p>
-<p>また，ImageNetという大規模画像データセット<span id="id10">[<a class="reference internal" href="#id41" title="Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. ImageNet: a large-scale hierarchical image database. In 2009 IEEE Conference on Computer Vision and Pattern Recognition, 248–255. June 2009. doi:10.1109/CVPR.2009.5206848.">Deng, Dong, Socher, Li, Li, and Fei-Fei, 2009</a>]</span>自体の登場も，CNNの発展に大きく寄与しました．</p>
+<p>また，ImageNetという大規模画像データセット<span id="id10">[<a class="reference internal" href="#id42" title="Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. ImageNet: a large-scale hierarchical image database. In 2009 IEEE Conference on Computer Vision and Pattern Recognition, 248–255. June 2009. doi:10.1109/CVPR.2009.5206848.">Deng, Dong, Socher, Li, Li, and Fei-Fei, 2009</a>]</span>自体の登場も，CNNの発展に大きく寄与しました．</p>
 </section>
 <section id="vgg">
 <h4><span class="section-number">15.1.2.3. </span>VGG<a class="headerlink" href="#vgg" title="Permalink to this headline">#</a></h4>
-<p>2014年のILSVRCにおけるImageNetを用いた画像認識精度のコンペティションで画像分類部門で2位、物体のローカライゼーション部門で1位を記録したモデルです．<span id="id11">[<a class="reference internal" href="#id42">Simonyan and Zisserman, 2014</a>]</span><br />
+<p>2014年のILSVRCにおけるImageNetを用いた画像認識精度のコンペティションで画像分類部門で2位、物体のローカライゼーション部門で1位を記録したモデルです．<span id="id11">[<a class="reference internal" href="#id43">Simonyan and Zisserman, 2014</a>]</span><br />
 当時では大きな数である（Conv, MaxPool, Linearを合計して）16層のモデルです．</p>
 </section>
 <section id="googlenet">
 <h4><span class="section-number">15.1.2.4. </span>GoogLeNet<a class="headerlink" href="#googlenet" title="Permalink to this headline">#</a></h4>
-<p>InceptionNetと名付けられたモデルの中の最初のバージョン，Inception v1はGoogLeNetとも呼ばれています．<span id="id12">[<a class="reference internal" href="#id40" title="Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich. Going deeper with convolutions. In 2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 1–9. IEEE, June 2015. doi:10.1109/cvpr.2015.7298594.">Szegedy, Liu, Jia, Sermanet, Reed, Anguelov, Erhan, Vanhoucke, and Rabinovich, 2015</a>]</span></p>
+<p>InceptionNetと名付けられたモデルの中の最初のバージョン，Inception v1はGoogLeNetとも呼ばれています．<span id="id12">[<a class="reference internal" href="#id41" title="Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich. Going deeper with convolutions. In 2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 1–9. IEEE, June 2015. doi:10.1109/cvpr.2015.7298594.">Szegedy, Liu, Jia, Sermanet, Reed, Anguelov, Erhan, Vanhoucke, and Rabinovich, 2015</a>]</span></p>
 <blockquote>
 <div><p>複数の畳み込み層やpooling層から構成されるInceptionモジュールと呼ばれる小さなネットワーク (micro networks) を定義し，これを通常の畳み込み層のように重ねていくことで1つの大きなCNNを作り上げている点である．<br />
 引用：<a class="reference external" href="https://qiita.com/yu4u/items/7e93c454c9410c4b5427#googlenet-2014">畳み込みニューラルネットワークの最新研究動向 (〜2017)</a></p>
@@ -821,7 +821,7 @@ label: &lt;class &#39;torch.Tensor&#39;&gt; torch.Size([1]) torch.int64
 	 tensor([5])
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x15ffce980&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x12eace980&gt;
 </pre></div>
 </div>
 <img alt="_images/4966ebd558c943e890e1cb7939ffd43cf02f97f7d5845ab740a4e702463e9c5e.png" src="_images/4966ebd558c943e890e1cb7939ffd43cf02f97f7d5845ab740a4e702463e9c5e.png" />
@@ -1057,6 +1057,11 @@ Sequential(
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  epoch    train_loss    valid_acc    valid_loss      dur
+-------  ------------  -----------  ------------  -------
+      1        <span class=" -Color -Color-Cyan">0.9455</span>       <span class=" -Color -Color-Green">0.8973</span>        <span class=" -Color -Color-Magenta">0.3246</span>  21.0032
+</pre></div>
+</div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;skorch.classifier.NeuralNetClassifier&#39;&gt;[initialized](
   module_=Sequential(
     (0): Conv2d(1, 32, kernel_size=(3, 3), stride=(1, 1))
@@ -1294,31 +1299,31 @@ Training: 1 epoch. 600 iteration. Loss:0.1402805894613266
 <h2><span class="section-number">15.6. </span>参考文献<a class="headerlink" href="#id27" title="Permalink to this headline">#</a></h2>
 <div class="docutils container" id="id28">
 <dl class="citation">
-<dt class="label" id="id43"><span class="brackets"><a class="fn-backref" href="#id7">CBD+90</a></span></dt>
+<dt class="label" id="id44"><span class="brackets"><a class="fn-backref" href="#id7">CBD+90</a></span></dt>
 <dd><p>Y Le Cun, B Boser, J S Denker, R E Howard, W Habbard, L D Jackel, and D Henderson. Handwritten digit recognition with a back-propagation network. In <em>Advances in neural information processing systems 2</em>, pages 396–404. Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, June 1990.</p>
 </dd>
-<dt class="label" id="id41"><span class="brackets"><a class="fn-backref" href="#id10">DDS+09</a></span></dt>
+<dt class="label" id="id42"><span class="brackets"><a class="fn-backref" href="#id10">DDS+09</a></span></dt>
 <dd><p>Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. ImageNet: a large-scale hierarchical image database. In <em>2009 IEEE Conference on Computer Vision and Pattern Recognition</em>, 248–255. June 2009. <a class="reference external" href="https://doi.org/10.1109/CVPR.2009.5206848">doi:10.1109/CVPR.2009.5206848</a>.</p>
 </dd>
-<dt class="label" id="id46"><span class="brackets"><a class="fn-backref" href="#id3">Fuk80</a></span></dt>
+<dt class="label" id="id47"><span class="brackets"><a class="fn-backref" href="#id3">Fuk80</a></span></dt>
 <dd><p>K Fukushima. Neocognitron: a self organizing neural network model for a mechanism of pattern recognition unaffected by shift in position. <em>Biol. Cybern.</em>, 36(4):193–202, 1980. <a class="reference external" href="https://doi.org/10.1007/BF00344251">doi:10.1007/BF00344251</a>.</p>
 </dd>
-<dt class="label" id="id47"><span class="brackets">KSH12</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id9">2</a>)</span></dt>
+<dt class="label" id="id48"><span class="brackets">KSH12</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id9">2</a>)</span></dt>
 <dd><p>Alex Krizhevsky, Ilya Sutskever, and Geoffrey E Hinton. Imagenet classification with deep convolutional neural networks. <em>Adv. Neural Inf. Process. Syst.</em>, 2012.</p>
 </dd>
-<dt class="label" id="id45"><span class="brackets"><a class="fn-backref" href="#id6">LBD+89</a></span></dt>
+<dt class="label" id="id46"><span class="brackets"><a class="fn-backref" href="#id6">LBD+89</a></span></dt>
 <dd><p>Y LeCun, B Boser, J S Denker, D Henderson, R E Howard, W Hubbard, and L D Jackel. Backpropagation applied to handwritten zip code recognition. <em>Neural Comput.</em>, 1(4):541–551, December 1989. <a class="reference external" href="https://doi.org/10.1162/neco.1989.1.4.541">doi:10.1162/neco.1989.1.4.541</a>.</p>
 </dd>
-<dt class="label" id="id44"><span class="brackets"><a class="fn-backref" href="#id8">LBBH98</a></span></dt>
+<dt class="label" id="id45"><span class="brackets"><a class="fn-backref" href="#id8">LBBH98</a></span></dt>
 <dd><p>Y Lecun, L Bottou, Y Bengio, and P Haffner. Gradient-based learning applied to document recognition. <em>Proc. IEEE</em>, 86(11):2278–2324, November 1998. <a class="reference external" href="https://doi.org/10.1109/5.726791">doi:10.1109/5.726791</a>.</p>
 </dd>
-<dt class="label" id="id42"><span class="brackets"><a class="fn-backref" href="#id11">SZ14</a></span></dt>
+<dt class="label" id="id43"><span class="brackets"><a class="fn-backref" href="#id11">SZ14</a></span></dt>
 <dd><p><strong>missing journal in Simonyan2014-wx</strong></p>
 </dd>
-<dt class="label" id="id40"><span class="brackets"><a class="fn-backref" href="#id12">SLJ+15</a></span></dt>
+<dt class="label" id="id41"><span class="brackets"><a class="fn-backref" href="#id12">SLJ+15</a></span></dt>
 <dd><p>Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich. Going deeper with convolutions. In <em>2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</em>, 1–9. IEEE, June 2015. <a class="reference external" href="https://doi.org/10.1109/cvpr.2015.7298594">doi:10.1109/cvpr.2015.7298594</a>.</p>
 </dd>
-<dt class="label" id="id48"><span class="brackets"><a class="fn-backref" href="#id1">16</a></span></dt>
+<dt class="label" id="id49"><span class="brackets"><a class="fn-backref" href="#id1">16</a></span></dt>
 <dd><p>岡谷 貴之. 画像認識のための深層学習の研究動向 : 畳込みニューラルネットワークとその利用法の発展(ニューラルネットワーク研究のフロンティア). <em>人工知能</em>, 31(2):169–179, 2016. <a class="reference external" href="https://doi.org/10.11517/jjsai.31.2\_169">doi:10.11517/jjsai.31.2\_169</a>.</p>
 </dd>
 </dl>

@@ -471,7 +471,7 @@ MLPのイメージ 出典：<a class="reference external" href="https://nkdkccmb
 <p>ニューラルネットワークは，入力されるデータ行列に対して，学習可能なパラメータを使った線形変換と非線形な活性化関数（activation function）を交互に適用することで様々なタスクを解くことができると知られている機械学習モデルです．</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>この曖昧な説明の気持ちは，<strong>普遍性定理(universal approximation theorem)</strong> <span id="id2">[<a class="reference internal" href="#id38" title="Kurt Hornik, Maxwell Stinchcombe, and Halbert White. Multilayer feedforward networks are universal approximators. Neural Netw., 2(5):359–366, January 1989. doi:10.1016/0893-6080(89)90020-8.">Hornik, Stinchcombe, and White, 1989</a>]</span>をベースにしています．</p>
+<p>この曖昧な説明の気持ちは，<strong>普遍性定理(universal approximation theorem)</strong> <span id="id2">[<a class="reference internal" href="#id39" title="Kurt Hornik, Maxwell Stinchcombe, and Halbert White. Multilayer feedforward networks are universal approximators. Neural Netw., 2(5):359–366, January 1989. doi:10.1016/0893-6080(89)90020-8.">Hornik, Stinchcombe, and White, 1989</a>]</span>をベースにしています．</p>
 <blockquote>
 <div><p>Universal Approximation Theorem (日本語では”普遍性定理”と呼ばれる)は、有限個のユニットを持つ一層の隠れ層で構成されるfeed-forward networkは、いくつかの条件のもと、任意の連続関数を近似することが出来る、という定理。</p>
 <p>言い換えると、feed-forward networksを使うことで適当な連続関数を近似できることが理論的に保証された、ということ。</p>
@@ -479,23 +479,23 @@ MLPのイメージ 出典：<a class="reference external" href="https://nkdkccmb
 </div></blockquote>
 <p>これに関する論文は何本もあるので，代表的なものをいくつか示しておきます．</p>
 <ul class="simple">
-<li><p><span id="id3">[<a class="reference internal" href="#id42" title="G Cybenko. Approximation by superpositions of a sigmoidal function. Math. Control Signals Systems, 2(4):303–314, December 1989. doi:10.1007/bf02551274.">Cybenko, 1989</a>]</span></p>
+<li><p><span id="id3">[<a class="reference internal" href="#id43" title="G Cybenko. Approximation by superpositions of a sigmoidal function. Math. Control Signals Systems, 2(4):303–314, December 1989. doi:10.1007/bf02551274.">Cybenko, 1989</a>]</span></p>
 <ul>
 <li><p>任意幅のニューロンでsigmoid関数の場合</p></li>
 </ul>
 </li>
-<li><p><span id="id4">[<a class="reference internal" href="#id38" title="Kurt Hornik, Maxwell Stinchcombe, and Halbert White. Multilayer feedforward networks are universal approximators. Neural Netw., 2(5):359–366, January 1989. doi:10.1016/0893-6080(89)90020-8.">Hornik, Stinchcombe, and White, 1989</a>]</span></p>
+<li><p><span id="id4">[<a class="reference internal" href="#id39" title="Kurt Hornik, Maxwell Stinchcombe, and Halbert White. Multilayer feedforward networks are universal approximators. Neural Netw., 2(5):359–366, January 1989. doi:10.1016/0893-6080(89)90020-8.">Hornik, Stinchcombe, and White, 1989</a>]</span></p>
 <ul>
 <li><p>隠れ層が1層しかない多層フィードフォワードネットワークは普遍的な近似器らしい</p></li>
 </ul>
 </li>
-<li><p><span id="id5">[<a class="reference internal" href="#id41" title="Kurt Hornik. Approximation capabilities of multilayer feedforward networks. Neural Netw., 4(2):251–257, January 1991. doi:10.1016/0893-6080(91)90009-T.">Hornik, 1991</a>]</span></p>
+<li><p><span id="id5">[<a class="reference internal" href="#id42" title="Kurt Hornik. Approximation capabilities of multilayer feedforward networks. Neural Netw., 4(2):251–257, January 1991. doi:10.1016/0893-6080(91)90009-T.">Hornik, 1991</a>]</span></p>
 <ul>
 <li><p>活性化関数はなんでも良いらしい</p></li>
 </ul>
 </li>
-<li><p><span id="id6">[<a class="reference internal" href="#id40" title="Moshe Leshno, Vladimir Ya Lin, Allan Pinkus, and Shimon Schocken. Multilayer feedforward networks with a nonpolynomial activation function can approximate any function. Neural Netw., 6(6):861–867, January 1993. doi:10.1016/S0893-6080(05)80131-5.">Leshno, Lin, Pinkus, and Schocken, 1993</a>]</span></p></li>
-<li><p><span id="id7">[<a class="reference internal" href="#id39" title="Allan Pinkus. Approximation theory of the MLP model in neural networks. Acta Numer., 8:143–195, January 1999. doi:10.1017/S0962492900002919.">Pinkus, 1999</a>]</span></p></li>
+<li><p><span id="id6">[<a class="reference internal" href="#id41" title="Moshe Leshno, Vladimir Ya Lin, Allan Pinkus, and Shimon Schocken. Multilayer feedforward networks with a nonpolynomial activation function can approximate any function. Neural Netw., 6(6):861–867, January 1993. doi:10.1016/S0893-6080(05)80131-5.">Leshno, Lin, Pinkus, and Schocken, 1993</a>]</span></p></li>
+<li><p><span id="id7">[<a class="reference internal" href="#id40" title="Allan Pinkus. Approximation theory of the MLP model in neural networks. Acta Numer., 8:143–195, January 1999. doi:10.1017/S0962492900002919.">Pinkus, 1999</a>]</span></p></li>
 </ul>
 </div>
 <p>私たちはこれから，何らかのタスクをうまく解くことができるように，MLPのパラメータを設定する方法を考えていかなければなりません．そのためにまず，MLPにデータ行列を入力してから，最終的にMLPから出力値が出てくるまでの様子を追ってみましょう．これを順伝播（Forward Propagation）と呼びます．</p>
@@ -586,19 +586,19 @@ MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - t_i)^2
 <h3><span class="section-number">12.4.1. </span>論文等<a class="headerlink" href="#id13" title="Permalink to this headline">#</a></h3>
 <div class="docutils container" id="id14">
 <dl class="citation">
-<dt class="label" id="id42"><span class="brackets"><a class="fn-backref" href="#id3">Cyb89</a></span></dt>
+<dt class="label" id="id43"><span class="brackets"><a class="fn-backref" href="#id3">Cyb89</a></span></dt>
 <dd><p>G Cybenko. Approximation by superpositions of a sigmoidal function. <em>Math. Control Signals Systems</em>, 2(4):303–314, December 1989. <a class="reference external" href="https://doi.org/10.1007/bf02551274">doi:10.1007/bf02551274</a>.</p>
 </dd>
-<dt class="label" id="id41"><span class="brackets"><a class="fn-backref" href="#id5">Hor91</a></span></dt>
+<dt class="label" id="id42"><span class="brackets"><a class="fn-backref" href="#id5">Hor91</a></span></dt>
 <dd><p>Kurt Hornik. Approximation capabilities of multilayer feedforward networks. <em>Neural Netw.</em>, 4(2):251–257, January 1991. <a class="reference external" href="https://doi.org/10.1016/0893-6080(91)90009-T">doi:10.1016/0893-6080(91)90009-T</a>.</p>
 </dd>
-<dt class="label" id="id38"><span class="brackets">HSW89</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id4">2</a>)</span></dt>
+<dt class="label" id="id39"><span class="brackets">HSW89</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id4">2</a>)</span></dt>
 <dd><p>Kurt Hornik, Maxwell Stinchcombe, and Halbert White. Multilayer feedforward networks are universal approximators. <em>Neural Netw.</em>, 2(5):359–366, January 1989. <a class="reference external" href="https://doi.org/10.1016/0893-6080(89)90020-8">doi:10.1016/0893-6080(89)90020-8</a>.</p>
 </dd>
-<dt class="label" id="id40"><span class="brackets"><a class="fn-backref" href="#id6">LLPS93</a></span></dt>
+<dt class="label" id="id41"><span class="brackets"><a class="fn-backref" href="#id6">LLPS93</a></span></dt>
 <dd><p>Moshe Leshno, Vladimir Ya Lin, Allan Pinkus, and Shimon Schocken. Multilayer feedforward networks with a nonpolynomial activation function can approximate any function. <em>Neural Netw.</em>, 6(6):861–867, January 1993. <a class="reference external" href="https://doi.org/10.1016/S0893-6080(05)80131-5">doi:10.1016/S0893-6080(05)80131-5</a>.</p>
 </dd>
-<dt class="label" id="id39"><span class="brackets"><a class="fn-backref" href="#id7">Pin99</a></span></dt>
+<dt class="label" id="id40"><span class="brackets"><a class="fn-backref" href="#id7">Pin99</a></span></dt>
 <dd><p>Allan Pinkus. Approximation theory of the MLP model in neural networks. <em>Acta Numer.</em>, 8:143–195, January 1999. <a class="reference external" href="https://doi.org/10.1017/S0962492900002919">doi:10.1017/S0962492900002919</a>.</p>
 </dd>
 </dl>
