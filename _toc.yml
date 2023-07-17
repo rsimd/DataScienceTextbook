@@ -43,4 +43,8 @@ chapters:
     - file: ae_mnist.myst.md
     - file: ae.myst.md
 #- file: VariatoinalAutoEncoder.ipynb
+- file: gan.ipynb
+  sections:
+    - file: dcgan.ipynb
+    - file: wgan.ipynb 
 - file: bib.myst.md
